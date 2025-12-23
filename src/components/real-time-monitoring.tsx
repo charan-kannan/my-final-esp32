@@ -14,10 +14,10 @@ type SensorToMonitor = typeof SENSORS_TO_MONITOR[number];
 
 const sensorColors: Record<SensorToMonitor, string> = {
   "Temperature": 'hsl(var(--chart-1))',
-  "Humidity": 'hsl(var(--chart-4))',
-  "Gas": 'hsl(var(--chart-5))',
-  "Air Quality": 'hsl(var(--chart-2))',
-  "Noise": 'hsl(var(--chart-3))',
+  "Humidity": 'hsl(var(--chart-2))',
+  "Air Quality": 'hsl(var(--chart-3))',
+  "Gas": 'hsl(var(--chart-4))',
+  "Noise": 'hsl(var(--chart-5))',
   "Light": 'hsl(var(--chart-6))',
 };
 
