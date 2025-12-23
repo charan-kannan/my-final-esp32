@@ -107,12 +107,12 @@ export function NovaChat() {
                         <Bot className="text-primary" />
                       </AvatarFallback>
                     </Avatar>
-                    <div className="bg-muted rounded-lg p-3 text-sm">
-                        <div className="flex items-center gap-2">
-                           <span className="h-2 w-2 bg-primary rounded-full animate-bounce [animation-delay:-0.3s]"></span>
-                           <span className="h-2 w-2 bg-primary rounded-full animate-bounce [animation-delay:-0.15s]"></span>
-                           <span className="h-2 w-2 bg-primary rounded-full animate-bounce"></span>
-                        </div>
+                    <div className="bg-muted rounded-lg p-3 text-sm flex items-end gap-1 h-10">
+                        <div className="w-1 bg-primary/80 rounded-full animate-sound-wave [animation-delay:-0.4s]" style={{height: '80%'}}></div>
+                        <div className="w-1 bg-primary/80 rounded-full animate-sound-wave [animation-delay:-0.2s]" style={{height: '100%'}}></div>
+                        <div className="w-1 bg-primary/80 rounded-full animate-sound-wave" style={{height: '60%'}}></div>
+                        <div className="w-1 bg-primary/80 rounded-full animate-sound-wave [animation-delay:-0.3s]" style={{height: '90%'}}></div>
+                        <div className="w-1 bg-primary/80 rounded-full animate-sound-wave [animation-delay:-0.1s]" style={{height: '70%'}}></div>
                     </div>
                 </div>
               )}
