@@ -40,14 +40,14 @@ export function SensorCard({ sensor }: { sensor: SensorData }) {
         </CardTitle>
         <span className={cn('text-xs font-bold font-mono', riskColor, `drop-shadow-[0_0_3px_currentColor]`)}>{sensor.riskLevel}</span>
       </CardHeader>
-      <CardContent className="flex flex-1 flex-col justify-between">
+      <CardContent className="flex flex-1 flex-col justify-between pb-4">
         <div className="flex flex-col">
             <span className="font-mono text-2xl font-bold text-glow">
             {sensor.value.toFixed(1)}
             </span>
             <span className="text-xs font-normal text-foreground/70 font-mono">{sensor.unit}</span>
         </div>
-        <div className="h-[80px] w-full pt-4">
+        <div className="h-[60px] w-full pt-4">
           <ChartContainer config={chartConfig}>
             <AreaChart
               accessibilityLayer
