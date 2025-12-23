@@ -9,9 +9,9 @@ import { sensorIcons } from '@/lib/sensor-icons';
 import { Skeleton } from '@/components/ui/skeleton';
 
 const riskLevelColors: Record<RiskLevel, string> = {
-  SAFE: 'text-[hsl(var(--chart-2))] drop-shadow-[0_0_3px_hsl(var(--chart-2))]',
-  CAUTION: 'text-[hsl(var(--chart-4))] drop-shadow-[0_0_3px_hsl(var(--chart-4))]',
-  DANGER: 'text-destructive drop-shadow-[0_0_3px_hsl(var(--destructive))]',
+  SAFE: 'text-neon-green',
+  CAUTION: 'text-neon-yellow',
+  DANGER: 'text-neon-red',
 };
 
 const chartColors: Record<RiskLevel, string> = {
@@ -32,20 +32,20 @@ export function SensorCard({ sensor }: { sensor: SensorData }) {
   const chartColor = chartColors[sensor.riskLevel];
 
   return (
-    <Card className="flex flex-col border-border/20 bg-background/30 backdrop-blur-lg transition-all hover:border-border/40">
+    <Card className="flex flex-col border-cyber-subtle bg-cyber-gray/60 backdrop-blur-sm transition-all hover:border-neon-cyan/50 hover:bg-cyber-subtle/80">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="flex items-center gap-2 text-sm font-medium text-primary/80">
+        <CardTitle className="flex items-center gap-2 text-sm font-medium text-foreground/80 font-mono uppercase">
           <Icon className="h-4 w-4" />
           {sensor.type}
         </CardTitle>
-        <span className={cn('text-xs font-bold', riskColor)}>{sensor.riskLevel}</span>
+        <span className={cn('text-xs font-bold font-mono', riskColor, `drop-shadow-[0_0_3px_currentColor]`)}>{sensor.riskLevel}</span>
       </CardHeader>
       <CardContent className="flex flex-1 flex-col justify-between">
-        <div className="flex items-baseline gap-2">
-            <span className="text-3xl font-bold text-primary drop-shadow-[0_0_5px_hsl(var(--primary))]">
+        <div className="flex flex-col">
+            <span className="font-mono text-3xl font-bold text-glow">
             {sensor.value.toFixed(1)}
             </span>
-            <span className="text-sm font-normal text-primary/70">{sensor.unit}</span>
+            <span className="text-xs font-normal text-foreground/70 font-mono">{sensor.unit}</span>
         </div>
         <div className="h-[80px] w-full pt-4">
           <ChartContainer config={chartConfig}>
@@ -67,10 +67,20 @@ export function SensorCard({ sensor }: { sensor: SensorData }) {
                 stroke={`hsl(${chartColor})`}
                 strokeWidth={2}
                 dot={false}
+                filter={`drop-shadow(0 0 5px hsl(${chartColor}))`}
               />
               <ChartTooltip
                 cursor={false}
-                content={<ChartTooltipContent indicator="line" hideLabel />}
+                content={<ChartTooltipContent 
+                  indicator="line" 
+                  hideLabel 
+                  contentStyle={{
+                    backgroundColor: 'hsl(var(--background) / 0.8)',
+                    borderColor: 'hsl(var(--border))',
+                    backdropFilter: 'blur(10px)',
+                    fontFamily: 'var(--font-mono)',
+                  }}
+                />}
               />
             </AreaChart>
           </ChartContainer>
@@ -82,13 +92,16 @@ export function SensorCard({ sensor }: { sensor: SensorData }) {
 
 export function SensorCardSkeleton() {
     return (
-        <Card className="flex flex-col border-primary/20 bg-card/50">
+        <Card className="flex flex-col border-cyber-subtle bg-cyber-gray/60">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <Skeleton className="h-5 w-24" />
                 <Skeleton className="h-4 w-16" />
             </CardHeader>
             <CardContent>
-                <Skeleton className="h-10 w-32" />
+                <div className='space-y-1'>
+                  <Skeleton className="h-8 w-20" />
+                  <Skeleton className="h-3 w-8" />
+                </div>
                 <Skeleton className="mt-4 h-[80px] w-full" />
             </CardContent>
         </Card>

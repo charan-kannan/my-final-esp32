@@ -19,13 +19,6 @@ const sensorColors: Record<SensorToMonitor, string> = {
   "Air Quality": 'hsl(var(--chart-2))',
 };
 
-const chartColors: Record<SensorToMonitor, string> = {
-    "Temperature": "var(--chart-1)",
-    "Humidity": "var(--chart-4)",
-    "Gas": "var(--chart-5)",
-    "Air Quality": "var(--chart-2)",
-  };
-
 export function RealTimeMonitoring() {
   const { sensors, isLoading } = useSensorData();
   const [activeSensors, setActiveSensors] = useState<SensorToMonitor[]>(["Temperature", "Humidity"]);
@@ -54,9 +47,9 @@ export function RealTimeMonitoring() {
 
   if (isLoading) {
     return (
-      <Card className="border-border/20 bg-background/30 backdrop-blur-lg">
+      <Card className="border-cyber-subtle bg-cyber-gray/60 backdrop-blur-sm">
         <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-primary">
+            <CardTitle className="flex items-center gap-2 text-glow font-display uppercase tracking-wider">
                 <Activity />
                 Real-Time Monitoring
             </CardTitle>
@@ -74,9 +67,9 @@ export function RealTimeMonitoring() {
   }
 
   return (
-    <Card className="border-border/20 bg-background/30 backdrop-blur-lg transition-all hover:border-border/40">
+    <Card className="border-cyber-subtle bg-cyber-gray/60 backdrop-blur-sm transition-all hover:border-neon-cyan/50 hover:bg-cyber-subtle/80">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-primary">
+        <CardTitle className="flex items-center gap-2 text-glow font-display uppercase tracking-wider">
             <Activity />
             Real-Time Monitoring
         </CardTitle>
@@ -88,12 +81,12 @@ export function RealTimeMonitoring() {
               key={type}
               variant={activeSensors.includes(type) ? 'default' : 'outline'}
               onClick={() => toggleSensor(type)}
-              className="transition-all bg-transparent backdrop-blur-xl"
+              className="font-mono uppercase transition-all"
               style={activeSensors.includes(type) ? {
                 backgroundColor: sensorColors[type],
                 borderColor: sensorColors[type],
                 color: 'hsl(var(--primary-foreground))',
-                boxShadow: `0 0 10px ${sensorColors[type]}`
+                boxShadow: `0 0 10px ${sensorColors[type]}, inset 0 0 5px ${sensorColors[type]}`
               } : {
                  borderColor: sensorColors[type],
                  color: sensorColors[type],
@@ -108,24 +101,25 @@ export function RealTimeMonitoring() {
             <AreaChart data={chartData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
                 <defs>
                     {monitoredSensors.map(sensor => (
-                        <linearGradient key={sensor.id} id={`fill-${sensor.id}`} x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor={`hsl(${chartColors[sensor.type as SensorToMonitor]})`} stopOpacity={0.8}/>
-                            <stop offset="95%" stopColor={`hsl(${chartColors[sensor.type as SensorToMonitor]})`} stopOpacity={0.1}/>
+                        <linearGradient key={sensor.id} id={`fill-chart-${sensor.id}`} x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor={sensorColors[sensor.type as SensorToMonitor]} stopOpacity={0.4}/>
+                            <stop offset="95%" stopColor={sensorColors[sensor.type as SensorToMonitor]} stopOpacity={0.05}/>
                         </linearGradient>
                     ))}
                 </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border) / 0.5)" />
-              <XAxis dataKey="name" stroke="hsl(var(--muted-foreground))" tick={{fontSize: 12}} />
-              <YAxis stroke="hsl(var(--muted-foreground))" tick={{fontSize: 12}} unit={activeSensors.length === 1 ? sensors.find(s=>s.type === activeSensors[0])?.unit : undefined} />
+              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border) / 0.2)" />
+              <XAxis dataKey="name" stroke="hsl(var(--muted-foreground))" tick={{fontSize: 12, fontFamily: 'var(--font-mono)'}} />
+              <YAxis stroke="hsl(var(--muted-foreground))" tick={{fontSize: 12, fontFamily: 'var(--font-mono)'}} unit={activeSensors.length === 1 ? sensors.find(s=>s.type === activeSensors[0])?.unit : undefined} />
               <Tooltip
                 contentStyle={{
                     backgroundColor: 'hsl(var(--background) / 0.8)',
                     borderColor: 'hsl(var(--border))',
                     backdropFilter: 'blur(10px)',
+                    fontFamily: 'var(--font-mono)',
                 }}
                 labelStyle={{color: 'hsl(var(--foreground))'}}
                 />
-              <Legend wrapperStyle={{fontSize: "14px"}}/>
+              <Legend wrapperStyle={{fontSize: "14px", fontFamily: 'var(--font-mono)', textTransform: 'uppercase'}}/>
               {monitoredSensors.map(sensor => (
                  <Area
                     key={sensor.type}
@@ -137,7 +131,7 @@ export function RealTimeMonitoring() {
                     activeDot={{ r: 6, filter: `drop-shadow(0 0 8px ${sensorColors[sensor.type as SensorToMonitor]})` }}
                     hide={!activeSensors.includes(sensor.type as SensorToMonitor)}
                     name={sensor.type}
-                    fill={`url(#fill-${sensor.id})`}
+                    fill={`url(#fill-chart-${sensor.id})`}
                     filter={`drop-shadow(0 0 8px ${sensorColors[sensor.type as SensorToMonitor]})`}
                   />
               ))}
