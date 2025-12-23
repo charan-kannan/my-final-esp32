@@ -26,7 +26,7 @@ const chartConfig = {
   },
 };
 
-export function SensorCard({ sensor }: { sensor: SensorData }) {
+export function SensorCard({ sensor, decimalPrecision = 1 }: { sensor: SensorData, decimalPrecision?: number }) {
   const Icon = sensorIcons[sensor.type];
   const riskColor = riskLevelColors[sensor.riskLevel];
   const chartColor = chartColors[sensor.riskLevel];
@@ -43,7 +43,7 @@ export function SensorCard({ sensor }: { sensor: SensorData }) {
       <CardContent className="p-6 pt-0">
         <div className="flex flex-col">
             <span className="font-mono text-2xl font-bold text-glow">
-            {sensor.value.toFixed(1)}
+            {sensor.value.toFixed(decimalPrecision)}
             </span>
             <span className="text-xs font-normal text-foreground/70 font-mono">{sensor.unit}</span>
         </div>

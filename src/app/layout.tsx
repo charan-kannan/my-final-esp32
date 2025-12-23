@@ -4,6 +4,7 @@ import './globals.css';
 import { cn } from '@/lib/utils';
 import { Toaster } from '@/components/ui/toaster';
 import { FirebaseClientProvider } from '@/firebase';
+import { SettingsProvider } from '@/components/settings-provider';
 
 const spaceGrotesk = Space_Grotesk({
   subsets: ['latin'],
@@ -42,7 +43,9 @@ export default function RootLayout({
         )}
       >
         <FirebaseClientProvider>
-          {children}
+          <SettingsProvider>
+            {children}
+          </SettingsProvider>
         </FirebaseClientProvider>
         <Toaster />
       </body>

@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from 'react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription, SheetTrigger } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { Settings } from 'lucide-react';
@@ -9,10 +8,17 @@ import { Separator } from './ui/separator';
 import { Label } from './ui/label';
 import { Switch } from './ui/switch';
 import { Slider } from './ui/slider';
+import { useSettings } from './settings-provider';
 
 export function SettingsPanel() {
-  const [pushAlerts, setPushAlerts] = useState(true);
-  const [emailAlerts, setEmailAlerts] = useState(false);
+    const { 
+        pushAlerts, 
+        setPushAlerts, 
+        emailAlerts, 
+        setEmailAlerts,
+        decimalPrecision,
+        setDecimalPrecision
+    } = useSettings();
 
   return (
     <Sheet>
@@ -52,6 +58,16 @@ export function SettingsPanel() {
             <Separator />
             <div className="space-y-4">
                 <h3 className="text-lg font-medium">Customization</h3>
+                <div className="space-y-2">
+                    <Label htmlFor="decimal-precision">Sensor Decimal Precision ({decimalPrecision})</Label>
+                    <Slider 
+                        id="decimal-precision" 
+                        value={[decimalPrecision]}
+                        onValueChange={(value) => setDecimalPrecision(value[0])}
+                        max={4} 
+                        step={1} 
+                    />
+                </div>
                 <div className="space-y-2">
                     <Label htmlFor="alert-volume">Alert Volume</Label>
                     <Slider id="alert-volume" defaultValue={[75]} max={100} step={1} />
