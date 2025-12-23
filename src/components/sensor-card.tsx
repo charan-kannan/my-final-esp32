@@ -3,7 +3,7 @@
 import type { SensorData, RiskLevel } from '@/lib/types';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
-import { Area, AreaChart, CartesianGrid, XAxis } from 'recharts';
+import { Area, AreaChart } from 'recharts';
 import { cn } from '@/lib/utils';
 import { sensorIcons } from '@/lib/sensor-icons';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -15,7 +15,7 @@ const riskLevelColors: Record<RiskLevel, string> = {
 };
 
 const chartColors: Record<RiskLevel, string> = {
-    SAFE: "var(--chart-2)",
+    SAFE: "var(--chart-1)",
     CAUTION: "var(--chart-4)",
     DANGER: "var(--chart-3)",
 };
@@ -42,7 +42,7 @@ export function SensorCard({ sensor }: { sensor: SensorData }) {
       </CardHeader>
       <CardContent className="flex flex-1 flex-col justify-between">
         <div className="flex flex-col">
-            <span className="font-mono text-3xl font-bold text-glow">
+            <span className="font-mono text-2xl font-bold text-glow">
             {sensor.value.toFixed(1)}
             </span>
             <span className="text-xs font-normal text-foreground/70 font-mono">{sensor.unit}</span>
