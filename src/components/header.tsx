@@ -1,7 +1,24 @@
+'use client';
+import { useRouter } from 'next/navigation';
+import { useAuth, useUser } from '@/firebase';
 import { NovaChat } from '@/components/nova-chat';
 import { SettingsPanel } from '@/components/settings-panel';
+import { Button } from './ui/button';
+import { LogIn } from 'lucide-react';
 
 export function Header() {
+  const { user, isUserLoading } = useUser();
+  const auth = useAuth();
+  const router = useRouter();
+
+  const handleLoginClick = () => {
+    router.push('/login');
+  };
+
+  const handleLogout = () => {
+    auth.signOut();
+  }
+
   return (
     <header className="sticky top-0 z-40 flex h-16 shrink-0 items-center justify-between gap-4 border-b border-cyber-subtle/50 bg-cyber-gray/50 px-4 backdrop-blur-lg md:px-6">
       <div className="flex items-center gap-2">
@@ -13,8 +30,17 @@ export function Header() {
         </h1>
       </div>
       <div className="flex items-center gap-2">
-        <NovaChat />
-        <SettingsPanel />
+        {!isUserLoading && user ? (
+          <>
+            <NovaChat />
+            <SettingsPanel />
+          </>
+        ) : !isUserLoading && !user ? (
+          <Button variant="outline" onClick={handleLoginClick} className="gap-2">
+            <LogIn className="h-4 w-4" />
+            Login
+          </Button>
+        ): null}
       </div>
     </header>
   );
