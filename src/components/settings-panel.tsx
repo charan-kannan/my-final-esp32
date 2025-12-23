@@ -1,6 +1,7 @@
 "use client";
 
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetDescription } from '@/components/ui/sheet';
+import { useState } from 'react';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { Settings } from 'lucide-react';
 import { UserProfile } from './user-profile';
@@ -10,6 +11,9 @@ import { Switch } from './ui/switch';
 import { Slider } from './ui/slider';
 
 export function SettingsPanel() {
+  const [pushAlerts, setPushAlerts] = useState(true);
+  const [emailAlerts, setEmailAlerts] = useState(false);
+
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -30,11 +34,19 @@ export function SettingsPanel() {
                 <h3 className="text-lg font-medium">Notifications</h3>
                 <div className="flex items-center justify-between">
                     <Label htmlFor="push-notifications">Enable Push Alerts</Label>
-                    <Switch id="push-notifications" defaultChecked />
+                    <Switch 
+                      id="push-notifications" 
+                      checked={pushAlerts}
+                      onCheckedChange={setPushAlerts}
+                    />
                 </div>
                 <div className="flex items-center justify-between">
                     <Label htmlFor="email-notifications">Enable Email Alerts</Label>
-                    <Switch id="email-notifications" />
+                    <Switch 
+                      id="email-notifications" 
+                      checked={emailAlerts}
+                      onCheckedChange={setEmailAlerts}
+                    />
                 </div>
             </div>
             <Separator />
