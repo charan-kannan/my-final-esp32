@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useSensorData } from '@/hooks/use-sensor-data';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, AreaChart, Area } from 'recharts';
 import { cn } from '@/lib/utils';
 import { Skeleton } from './ui/skeleton';
 import { Activity } from 'lucide-react';
@@ -19,9 +19,16 @@ const sensorColors: Record<SensorToMonitor, string> = {
   "Air Quality": 'hsl(var(--chart-2))',
 };
 
+const chartColors: Record<SensorToMonitor, string> = {
+    "Temperature": "var(--chart-1)",
+    "Humidity": "var(--chart-4)",
+    "Gas": "var(--chart-5)",
+    "Air Quality": "var(--chart-2)",
+  };
+
 export function RealTimeMonitoring() {
   const { sensors, isLoading } = useSensorData();
-  const [activeSensors, setActiveSensors] = useState<SensorToMonitor[]>(["Temperature", "Humidity", "Gas", "Air Quality"]);
+  const [activeSensors, setActiveSensors] = useState<SensorToMonitor[]>(["Temperature", "Humidity"]);
 
   const toggleSensor = (sensorType: SensorToMonitor) => {
     setActiveSensors(prev =>
@@ -81,10 +88,7 @@ export function RealTimeMonitoring() {
               key={type}
               variant={activeSensors.includes(type) ? 'default' : 'outline'}
               onClick={() => toggleSensor(type)}
-              className={cn("transition-all", {
-                'bg-primary text-primary-foreground': activeSensors.includes(type),
-                'border-primary/50 text-primary/80 hover:bg-primary/10 hover:text-primary': !activeSensors.includes(type),
-              })}
+              className="transition-all"
               style={activeSensors.includes(type) ? {
                 backgroundColor: sensorColors[type],
                 borderColor: sensorColors[type],
@@ -101,10 +105,18 @@ export function RealTimeMonitoring() {
         </div>
         <div className="h-[300px] w-full">
           <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={chartData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
+            <AreaChart data={chartData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
+                <defs>
+                    {monitoredSensors.map(sensor => (
+                        <linearGradient key={sensor.id} id={`fill-${sensor.id}`} x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor={`hsl(${chartColors[sensor.type as SensorToMonitor]})`} stopOpacity={0.8}/>
+                            <stop offset="95%" stopColor={`hsl(${chartColors[sensor.type as SensorToMonitor]})`} stopOpacity={0.1}/>
+                        </linearGradient>
+                    ))}
+                </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border) / 0.5)" />
               <XAxis dataKey="name" stroke="hsl(var(--muted-foreground))" tick={{fontSize: 12}} />
-              <YAxis stroke="hsl(var(--muted-foreground))" tick={{fontSize: 12}} />
+              <YAxis stroke="hsl(var(--muted-foreground))" tick={{fontSize: 12}} unit={activeSensors.length === 1 ? sensors.find(s=>s.type === activeSensors[0])?.unit : undefined} />
               <Tooltip
                 contentStyle={{
                     backgroundColor: 'hsl(var(--background) / 0.9)',
@@ -114,20 +126,21 @@ export function RealTimeMonitoring() {
                 />
               <Legend wrapperStyle={{fontSize: "14px"}}/>
               {monitoredSensors.map(sensor => (
-                <Line
-                  key={sensor.type}
-                  type="monotone"
-                  dataKey={sensor.type}
-                  stroke={sensorColors[sensor.type as SensorToMonitor]}
-                  strokeWidth={2}
-                  dot={false}
-                  activeDot={{ r: 6 }}
-                  hide={!activeSensors.includes(sensor.type as SensorToMonitor)}
-                  name={sensor.type}
-                  filter={`drop-shadow(0 0 4px ${sensorColors[sensor.type as SensorToMonitor]})`}
-                />
+                 <Area
+                    key={sensor.type}
+                    type="monotone"
+                    dataKey={sensor.type}
+                    stroke={sensorColors[sensor.type as SensorToMonitor]}
+                    strokeWidth={2}
+                    dot={false}
+                    activeDot={{ r: 6 }}
+                    hide={!activeSensors.includes(sensor.type as SensorToMonitor)}
+                    name={sensor.type}
+                    fill={`url(#fill-${sensor.id})`}
+                    filter={`drop-shadow(0 0 4px ${sensorColors[sensor.type as SensorToMonitor]})`}
+                  />
               ))}
-            </LineChart>
+            </AreaChart>
           </ResponsiveContainer>
         </div>
       </CardContent>
