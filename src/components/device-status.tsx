@@ -8,9 +8,10 @@ export function DeviceStatus() {
   const [isConnected, setIsConnected] = useState(true);
 
   useEffect(() => {
+    // Simulate connection status toggling
     const interval = setInterval(() => {
       setIsConnected(prev => !prev);
-    }, 5000); // Toggles every 5 seconds
+    }, 5000); 
 
     return () => clearInterval(interval);
   }, []);

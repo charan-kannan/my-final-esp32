@@ -53,8 +53,8 @@ export function NovaChat() {
     }
 
 
-    const newNovaMessage: Message = { id: Date.now() + 1, text: response, sender: 'friday' };
-    setMessages(prev => [...prev, newNovaMessage]);
+    const newFridayMessage: Message = { id: Date.now() + 1, text: response, sender: 'friday' };
+    setMessages(prev => [...prev, newFridayMessage]);
     setIsThinking(false);
   };
 
