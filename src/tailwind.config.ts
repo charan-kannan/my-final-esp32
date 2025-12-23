@@ -106,7 +106,7 @@ export default {
             boxShadow: '0 0 25px hsl(var(--primary))',
           },
         },
-        'fridey': {
+        'sound-wave': {
           '0%, 100%': { transform: 'scaleY(0.4)' },
           '50%': { transform: 'scaleY(1)' },
         },
@@ -119,7 +119,7 @@ export default {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
         'pulse-glow': 'pulse-glow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-        'sound-wave': 'fridey 1.2s infinite ease-in-out',
+        'sound-wave': 'sound-wave 1.2s infinite ease-in-out',
         'pulse-fast': 'pulse-fast 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite',
       },
     },

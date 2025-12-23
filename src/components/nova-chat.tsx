@@ -15,12 +15,12 @@ import { useSensorData } from '@/hooks/use-sensor-data';
 interface Message {
   id: number;
   text: string;
-  sender: 'user' | 'nova';
+  sender: 'user' | 'friday';
 }
 
 export function NovaChat() {
   const [messages, setMessages] = useState<Message[]>([
-    { id: 1, text: "Hello! How are you feeling today?", sender: 'nova' },
+    { id: 1, text: "Good day. I am F.R.I.D.A.Y. How can I assist you?", sender: 'friday' },
   ]);
   const [input, setInput] = useState('');
   const [isThinking, setIsThinking] = useState(false);
@@ -53,7 +53,7 @@ export function NovaChat() {
     }
 
 
-    const newNovaMessage: Message = { id: Date.now() + 1, text: response, sender: 'nova' };
+    const newNovaMessage: Message = { id: Date.now() + 1, text: response, sender: 'friday' };
     setMessages(prev => [...prev, newNovaMessage]);
     setIsThinking(false);
   };
@@ -67,13 +67,13 @@ export function NovaChat() {
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75"></span>
             <span className="relative inline-flex rounded-full h-2 w-2 bg-accent"></span>
           </span>
-          <span className="sr-only">Toggle Nova AI</span>
+          <span className="sr-only">Toggle F.R.I.D.A.Y. AI</span>
         </Button>
       </SheetTrigger>
       <SheetContent className="flex flex-col">
         <SheetHeader>
           <SheetTitle className="flex items-center gap-2 text-primary">
-            <Bot /> Nova - Your Personal Companion
+            <Bot /> F.R.I.D.A.Y. - Your Personal Companion
           </SheetTitle>
         </SheetHeader>
         <div className="flex-1 flex flex-col justify-between h-[calc(100%-4rem)]">
@@ -81,7 +81,7 @@ export function NovaChat() {
             <div className="space-y-4">
               {messages.map((message) => (
                 <div key={message.id} className={cn('flex items-start gap-3', message.sender === 'user' ? 'justify-end' : 'justify-start')}>
-                  {message.sender === 'nova' && (
+                  {message.sender === 'friday' && (
                     <Avatar className="h-8 w-8 border-2 border-primary">
                       <AvatarFallback>
                         <Bot className="text-primary" />
@@ -108,9 +108,9 @@ export function NovaChat() {
                       </AvatarFallback>
                     </Avatar>
                     <div className="bg-muted rounded-lg p-3 text-sm flex items-end gap-1 h-10">
-                        <div className="w-1 bg-primary/80 rounded-full animate-sound-wave [animation-delay:-0.4s]" style={{animationName: 'fridey', height: '80%'}}></div>
-                        <div className="w-1 bg-primary/80 rounded-full animate-sound-wave [animation-delay:-0.2s]" style={{animationName: 'fridey', height: '100%'}}></div>
-                        <div className="w-1 bg-primary/80 rounded-full animate-sound-wave" style={{animationName: 'fridey', height: '60%'}}></div>
+                        <div className="w-1 bg-primary/80 rounded-full animate-sound-wave [animation-delay:-0.4s]" style={{height: '80%'}}></div>
+                        <div className="w-1 bg-primary/80 rounded-full animate-sound-wave [animation-delay:-0.2s]" style={{height: '100%'}}></div>
+                        <div className="w-1 bg-primary/80 rounded-full animate-sound-wave" style={{height: '60%'}}></div>
                     </div>
                 </div>
               )}
@@ -124,7 +124,7 @@ export function NovaChat() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-              placeholder="Talk to Nova..."
+              placeholder="Talk to F.R.I.D.A.Y...."
               className="flex-1"
               disabled={isThinking}
             />
