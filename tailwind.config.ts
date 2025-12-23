@@ -63,6 +63,7 @@ export default {
           '3': 'hsl(var(--chart-3))',
           '4': 'hsl(var(--chart-4))',
           '5': 'hsl(var(--chart-5))',
+          '6': 'hsl(var(--chart-6))',
         },
         'cyber-black': '#050505',
         'cyber-gray': '#0A0A0C',

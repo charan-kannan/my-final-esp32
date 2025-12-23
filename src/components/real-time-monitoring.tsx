@@ -9,7 +9,7 @@ import { cn } from '@/lib/utils';
 import { Skeleton } from './ui/skeleton';
 import { Activity } from 'lucide-react';
 
-const SENSORS_TO_MONITOR = ["Temperature", "Humidity", "Gas", "Air Quality"] as const;
+const SENSORS_TO_MONITOR = ["Temperature", "Humidity", "Gas", "Air Quality", "Noise", "Light"] as const;
 type SensorToMonitor = typeof SENSORS_TO_MONITOR[number];
 
 const sensorColors: Record<SensorToMonitor, string> = {
@@ -17,6 +17,8 @@ const sensorColors: Record<SensorToMonitor, string> = {
   "Humidity": 'hsl(var(--chart-4))',
   "Gas": 'hsl(var(--chart-5))',
   "Air Quality": 'hsl(var(--chart-2))',
+  "Noise": 'hsl(var(--chart-3))',
+  "Light": 'hsl(var(--chart-6))',
 };
 
 export function RealTimeMonitoring() {
