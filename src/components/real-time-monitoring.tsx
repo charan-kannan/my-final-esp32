@@ -121,7 +121,13 @@ export function RealTimeMonitoring() {
                 }}
                 labelStyle={{color: 'hsl(var(--foreground))'}}
                 />
-              <Legend wrapperStyle={{fontSize: "14px", fontFamily: 'var(--font-mono)', textTransform: 'uppercase'}}/>
+              <Legend 
+                wrapperStyle={{fontSize: "14px", fontFamily: 'var(--font-mono)', textTransform: 'uppercase'}}
+                formatter={(value, entry) => {
+                  const color = sensorColors[value as SensorToMonitor];
+                  return <span style={{ color }}>{value}</span>;
+                }}
+              />
               {monitoredSensors.map(sensor => (
                  <Area
                     key={sensor.type}
