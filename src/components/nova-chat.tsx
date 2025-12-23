@@ -102,17 +102,15 @@ export function NovaChat() {
               ))}
               {isThinking && (
                  <div className="flex items-start gap-3 justify-start">
-                    <Avatar className="h-8 w-8 border-2 border-primary">
-                      <AvatarFallback>
+                    <Avatar className="h-8 w-8 border-2 border-primary animate-pulse-glow">
+                      <AvatarFallback className="bg-transparent">
                         <Bot className="text-primary" />
                       </AvatarFallback>
                     </Avatar>
                     <div className="bg-muted rounded-lg p-3 text-sm flex items-end gap-1 h-10">
-                        <div className="w-1 bg-primary/80 rounded-full animate-sound-wave [animation-delay:-0.4s]" style={{height: '80%'}}></div>
-                        <div className="w-1 bg-primary/80 rounded-full animate-sound-wave [animation-delay:-0.2s]" style={{height: '100%'}}></div>
-                        <div className="w-1 bg-primary/80 rounded-full animate-sound-wave" style={{height: '60%'}}></div>
-                        <div className="w-1 bg-primary/80 rounded-full animate-sound-wave [animation-delay:-0.3s]" style={{height: '90%'}}></div>
-                        <div className="w-1 bg-primary/80 rounded-full animate-sound-wave [animation-delay:-0.1s]" style={{height: '70%'}}></div>
+                        <div className="w-1 bg-primary/80 rounded-full animate-sound-wave [animation-delay:-0.4s]" style={{animationName: 'fridey', height: '80%'}}></div>
+                        <div className="w-1 bg-primary/80 rounded-full animate-sound-wave [animation-delay:-0.2s]" style={{animationName: 'fridey', height: '100%'}}></div>
+                        <div className="w-1 bg-primary/80 rounded-full animate-sound-wave" style={{animationName: 'fridey', height: '60%'}}></div>
                     </div>
                 </div>
               )}
