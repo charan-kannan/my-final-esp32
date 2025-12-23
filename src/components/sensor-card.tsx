@@ -41,9 +41,11 @@ export function SensorCard({ sensor }: { sensor: SensorData }) {
         <span className={cn('text-xs font-bold', riskColor)}>{sensor.riskLevel}</span>
       </CardHeader>
       <CardContent className="flex flex-1 flex-col justify-between">
-        <div className="text-3xl font-bold text-primary drop-shadow-[0_0_5px_hsl(var(--primary))]">
-          {sensor.value.toFixed(1)}
-          <span className="text-lg font-normal text-primary/70">{sensor.unit}</span>
+        <div className="flex items-baseline gap-2">
+            <span className="text-3xl font-bold text-primary drop-shadow-[0_0_5px_hsl(var(--primary))]">
+            {sensor.value.toFixed(1)}
+            </span>
+            <span className="text-sm font-normal text-primary/70">{sensor.unit}</span>
         </div>
         <div className="h-[80px] w-full pt-4">
           <ChartContainer config={chartConfig}>
