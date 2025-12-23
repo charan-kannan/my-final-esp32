@@ -15,7 +15,9 @@ export function Dashboard() {
           ? SENSOR_TYPES.slice(0, 4).map((_, index) => <SensorCardSkeleton key={index} />)
           : sensors.filter(s => ['Temperature', 'Humidity', 'Light', 'Noise'].includes(s.type)).map(sensor => <SensorCard key={sensor.id} sensor={sensor} />)}
       </div>
-      <RealTimeMonitoring />
+      <div className="mt-8">
+        <RealTimeMonitoring />
+      </div>
     </>
   );
 }

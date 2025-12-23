@@ -54,7 +54,7 @@ export function RealTimeMonitoring() {
 
   if (isLoading) {
     return (
-      <Card className="border-primary/20 bg-card/50 backdrop-blur-sm">
+      <Card className="border-border/20 bg-background/30 backdrop-blur-lg">
         <CardHeader>
             <CardTitle className="flex items-center gap-2 text-primary">
                 <Activity />
@@ -74,7 +74,7 @@ export function RealTimeMonitoring() {
   }
 
   return (
-    <Card className="border-primary/20 bg-card/50 backdrop-blur-sm transition-all hover:border-primary/40 hover:shadow-2xl hover:shadow-primary/10">
+    <Card className="border-border/20 bg-background/30 backdrop-blur-lg transition-all hover:border-border/40">
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-primary">
             <Activity />
@@ -88,7 +88,7 @@ export function RealTimeMonitoring() {
               key={type}
               variant={activeSensors.includes(type) ? 'default' : 'outline'}
               onClick={() => toggleSensor(type)}
-              className="transition-all"
+              className="transition-all bg-transparent backdrop-blur-xl"
               style={activeSensors.includes(type) ? {
                 backgroundColor: sensorColors[type],
                 borderColor: sensorColors[type],
@@ -119,8 +119,9 @@ export function RealTimeMonitoring() {
               <YAxis stroke="hsl(var(--muted-foreground))" tick={{fontSize: 12}} unit={activeSensors.length === 1 ? sensors.find(s=>s.type === activeSensors[0])?.unit : undefined} />
               <Tooltip
                 contentStyle={{
-                    backgroundColor: 'hsl(var(--background) / 0.9)',
+                    backgroundColor: 'hsl(var(--background) / 0.8)',
                     borderColor: 'hsl(var(--border))',
+                    backdropFilter: 'blur(10px)',
                 }}
                 labelStyle={{color: 'hsl(var(--foreground))'}}
                 />
@@ -133,11 +134,11 @@ export function RealTimeMonitoring() {
                     stroke={sensorColors[sensor.type as SensorToMonitor]}
                     strokeWidth={2}
                     dot={false}
-                    activeDot={{ r: 6 }}
+                    activeDot={{ r: 6, filter: `drop-shadow(0 0 8px ${sensorColors[sensor.type as SensorToMonitor]})` }}
                     hide={!activeSensors.includes(sensor.type as SensorToMonitor)}
                     name={sensor.type}
                     fill={`url(#fill-${sensor.id})`}
-                    filter={`drop-shadow(0 0 4px ${sensorColors[sensor.type as SensorToMonitor]})`}
+                    filter={`drop-shadow(0 0 8px ${sensorColors[sensor.type as SensorToMonitor]})`}
                   />
               ))}
             </AreaChart>
