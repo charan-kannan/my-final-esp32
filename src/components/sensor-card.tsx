@@ -32,7 +32,7 @@ export function SensorCard({ sensor }: { sensor: SensorData }) {
   const chartColor = chartColors[sensor.riskLevel];
 
   return (
-    <Card className="flex flex-col border-cyber-subtle bg-cyber-gray/60 backdrop-blur-sm transition-all hover:border-neon-cyan/50 hover:bg-cyber-subtle/80">
+    <Card className="flex flex-col border-cyber-subtle bg-cyber-gray/60 backdrop-blur-sm transition-all hover:border-neon-cyan/50 hover:bg-cyber-subtle/80 overflow-hidden">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="flex items-center gap-2 text-sm font-medium text-foreground/80 font-mono uppercase">
           <Icon className="h-4 w-4" />
