@@ -1,0 +1,151 @@
+/**
+ * Core Philosophy: This ruleset implements a strict, user-centric security model.
+ * All data, including user profiles, device settings, and sensor data, is
+ * considered private and is owned by a specific user. There is no public or
+ * shared data within this model.
+ *
+ * Data Structure: The data is organized hierarchically under the /users/{userId}
+ * path. Each user's data, including their device settings and the sensor data
+ * from those devices, is stored in a segregated tree structure. This ensures
+ * that queries are naturally scoped to the authenticated user, enhancing both
+ * security and performance.
+ *
+ * Key Security Decisions:
+ * - User data is strictly private. A user can only access documents within their
+ *   own data tree (i.e., where the path's {userId} matches their auth UID).
+ * - Listing the top-level /users collection is explicitly disallowed to protect
+ *   user privacy and prevent enumeration of all users.
+ * - All write operations (create, update, delete) are restricted to the document
+ *   owner.
+ * - All state-changing operations (update, delete) first verify that the document
+ *   exists before allowing the change, preventing unintended side effects.
+ *
+ * Denormalization for Authorization: The rules enforce relational integrity where
+ * applicable. For example, a new DeviceSettings document created at
+ * /users/{userId}/deviceSettings/{deviceId} must contain a `userId` field that
+ * matches the {userId} from the path. This link is then enforced as immutable
+ * on updates, creating a permanent and secure ownership record directly on the
+ * document.
+ *
+ * Structural Segregation: The use of nested collections under /users/{userId}
+ * is the primary method of data segregation. This pattern is highly secure and
+ * efficient, as it allows for simple path-based rules to control access to
+ * entire sub-trees of user-owned data without complex lookups.
+ */
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ----------------------------------------------------------------------
+    // Helper Functions
+    // ----------------------------------------------------------------------
+
+    /**
+     * Checks if the user is authenticated.
+     */
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    /**
+     * Checks if the authenticated user's UID matches the provided userId.
+     * This is the foundation of the ownership model.
+     * @param userId The user ID to check against the authenticated user.
+     */
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    /**
+     * Checks for ownership AND ensures the document already exists.
+     * Used for safe update and delete operations.
+     * @param userId The user ID to check for ownership.
+     */
+    function isExistingOwner(userId) {
+      return isOwner(userId) && resource != null;
+    }
+    
+    /**
+     * Validates that the 'id' field within a new User document matches its
+     * document ID in the path.
+     * @param userId The user ID from the path.
+     */
+    function isCreatingValidUser(userId) {
+      return request.resource.data.id == userId;
+    }
+
+    /**
+     * Enforces that the 'id' field of a User document is immutable on update.
+     */
+    function isUpdatingValidUser() {
+      return request.resource.data.id == resource.data.id;
+    }
+
+    /**
+     * Validates that the 'userId' field within a new DeviceSettings document
+     * matches the parent user's ID in the path.
+     * @param userId The user ID from the path.
+     */
+    function isCreatingValidDeviceSetting(userId) {
+      return request.resource.data.userId == userId;
+    }
+    
+    /**
+     * Enforces that the 'userId' field of a DeviceSettings document is immutable.
+     */
+    function isUpdatingValidDeviceSetting() {
+      return request.resource.data.userId == resource.data.userId;
+    }
+
+    // ----------------------------------------------------------------------
+    // Collection Rules
+    // ----------------------------------------------------------------------
+
+    /**
+     * @description Manages user profiles. Each user can create their own profile
+     *   and has full control over it. No other user can view or modify it.
+     * @path /users/{userId}
+     * @allow (create) An authenticated user creating their own profile document, where the document's `id` field matches their UID.
+     * @deny (list) Any user, authenticated or not, attempting to list all user profiles.
+     * @principle Restricts access to a user's own data tree and enforces self-creation of the root user document.
+     */
+    match /users/{userId} {
+      allow get: if isOwner(userId);
+      allow list: if false;
+      allow create: if isOwner(userId) && isCreatingValidUser(userId);
+      allow update: if isExistingOwner(userId) && isUpdatingValidUser();
+      allow delete: if isExistingOwner(userId);
+    }
+
+    /**
+     * @description Secures device settings, which are private to the user who owns them.
+     * @path /users/{userId}/deviceSettings/{deviceId}
+     * @allow (create) The user specified in {userId} creating a new device setting document for themselves.
+     * @deny (get) An authenticated user trying to read the device settings of another user.
+     * @principle Enforces document ownership for all operations and validates the relational link to the parent user.
+     */
+    match /users/{userId}/deviceSettings/{deviceId} {
+      allow get: if isOwner(userId);
+      allow list: if isOwner(userId);
+      allow create: if isOwner(userId) && isCreatingValidDeviceSetting(userId);
+      allow update: if isExistingOwner(userId) && isUpdatingValidDeviceSetting();
+      allow delete: if isExistingOwner(userId);
+    }
+
+    /**
+     * @description Manages sensor data, which is nested under a specific device owned
+     *   by a user. Access is granted based on ownership of the parent user document.
+     * @path /users/{userId}/deviceSettings/{deviceId}/sensorData/{sensorDataId}
+     * @allow (list) The user specified in {userId} listing all sensor data for one of their devices.
+     * @deny (update) An attacker trying to tamper with the sensor data of another user's device.
+     * @principle Inherits ownership from the parent path, ensuring all nested data is protected by the same user ownership rule.
+     */
+    match /users/{userId}/deviceSettings/{deviceId}/sensorData/{sensorDataId} {
+      allow get: if isOwner(userId);
+      allow list: if isOwner(userId);
+      allow create: if isOwner(userId);
+      allow update: if isExistingOwner(userId);
+      allow delete: if isExistingOwner(userId);
+    }
+  }
+}
