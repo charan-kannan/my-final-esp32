@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { useToast } from '@/hooks/use-toast';
 import type { SensorData, RiskLevel } from '@/lib/types';
 import { SENSOR_TYPES, SENSOR_THRESHOLDS } from '@/lib/constants';
 
@@ -36,30 +35,6 @@ const generateInitialSensors = (): SensorData[] => {
 export function useSensorData() {
   const [sensors, setSensors] = useState<SensorData[]>([]);
   const [isInitialized, setIsInitialized] = useState(false);
-  const { toast } = useToast();
-
-  useEffect(() => {
-    // This effect handles firing toasts when a sensor enters a DANGER state.
-    sensors.forEach(sensor => {
-      // Find the previous state of the sensor to check if the risk level changed.
-      const previousHistoryValue = sensor.history[sensor.history.length - 2]?.value;
-      if (previousHistoryValue === undefined) return;
-
-      const previousRiskLevel = getRiskLevel(sensor.type, previousHistoryValue);
-      const currentRiskLevel = sensor.riskLevel;
-      
-      if (currentRiskLevel === 'DANGER' && previousRiskLevel !== 'DANGER') {
-        toast({
-          variant: 'destructive',
-          title: 'High-Risk Alert!',
-          description: `${sensor.type} levels are dangerously high: ${sensor.value.toFixed(
-            2
-          )} ${sensor.unit}`,
-        });
-      }
-    });
-  }, [sensors, toast]);
-
 
   const updateSensorData = useCallback(() => {
     setSensors(prevSensors => {
