@@ -109,6 +109,10 @@ export default {
         'sound-wave': {
           '0%, 100%': { transform: 'scaleY(0.4)' },
           '50%': { transform: 'scaleY(1)' },
+        },
+        'pulse-fast': {
+            '0%, 100%': { opacity: '1' },
+            '50%': { opacity: '0.5' },
         }
       },
       animation: {
@@ -116,7 +120,16 @@ export default {
         'accordion-up': 'accordion-up 0.2s ease-out',
         'pulse-glow': 'pulse-glow 3s ease-in-out infinite',
         'sound-wave': 'sound-wave 1.2s infinite ease-in-out',
+        'pulse-fast': 'pulse-fast 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite',
       },
+      dropShadow: {
+        'glow-primary': '0 0 10px hsl(var(--primary))',
+        'glow-chart-1': '0 0 10px hsl(var(--chart-1))',
+        'glow-chart-2': '0 0 10px hsl(var(--chart-2))',
+        'glow-chart-3': '0 0 10px hsl(var(--chart-3))',
+        'glow-chart-4': '0 0 10px hsl(var(--chart-4))',
+        'glow-chart-5': '0 0 10px hsl(var(--chart-5))',
+      }
     },
   },
   plugins: [require('tailwindcss-animate')],
