@@ -40,19 +40,19 @@ export function SensorCard({ sensor }: { sensor: SensorData }) {
         </CardTitle>
         <span className={cn('text-xs font-bold font-mono', riskColor, `drop-shadow-[0_0_3px_currentColor]`)}>{sensor.riskLevel}</span>
       </CardHeader>
-      <CardContent className="flex flex-1 flex-col justify-between pb-4">
+      <CardContent className="p-6 pt-0">
         <div className="flex flex-col">
             <span className="font-mono text-2xl font-bold text-glow">
             {sensor.value.toFixed(1)}
             </span>
             <span className="text-xs font-normal text-foreground/70 font-mono">{sensor.unit}</span>
         </div>
-        <div className="h-[60px] w-full pt-4">
+        <div className="h-[60px] w-full mt-2">
           <ChartContainer config={chartConfig}>
             <AreaChart
               accessibilityLayer
               data={sensor.history}
-              margin={{ left: 0, right: 0, top: 0, bottom: 0 }}
+              margin={{ left: 0, right: 0, top: 5, bottom: 5 }}
             >
               <defs>
                 <linearGradient id={`fill-${sensor.id}`} x1="0" y1="0" x2="0" y2="1">
