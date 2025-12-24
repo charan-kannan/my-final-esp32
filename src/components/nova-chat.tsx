@@ -40,7 +40,7 @@ export function NovaChat() {
 
   const audioRef = useRef<HTMLAudioElement>(null);
   const recognitionRef = useRef<any>(null);
-  const { sensors } = useSensorData();
+  const { sensors: latestSensors } = useSensorData(); // Get the latest sensor data when needed
 
   const playAudio = async (text: string) => {
     if (!isAudioEnabled) return;
@@ -86,9 +86,9 @@ export function NovaChat() {
         audioRef.current.play().catch(e => console.error("Audio playback failed", e));
     }
   }, [audioUrl]);
-
+  
   useEffect(() => {
-    // Play the initial greeting only once
+    // Play the initial greeting only once when the component mounts
     if (!initialGreetingPlayed) {
       playAudio(messages[0].text);
       setInitialGreetingPlayed(true);
@@ -109,7 +109,8 @@ export function NovaChat() {
     let response: string;
     try {
       if (currentInput.toLowerCase().includes('status update')) {
-        const sensorDataObject = sensors.reduce((acc, sensor) => {
+        // Fetch the latest sensor data only when needed
+        const sensorDataObject = latestSensors.reduce((acc, sensor) => {
             acc[sensor.type] = `${sensor.value.toFixed(2)} ${sensor.unit}`;
             return acc;
         }, {} as Record<string, string>);
