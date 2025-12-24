@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from 'react';
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -96,7 +96,7 @@ export function NovaChat() {
       setInitialGreetingPlayed(true);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [initialGreetingPlayed, audioUrl]);
+  }, [initialGreetingPlayed, messages, audioUrl]);
 
   const handleSend = async () => {
     if (input.trim() === '') return;
@@ -149,8 +149,8 @@ export function NovaChat() {
 
   return (
     <>
-      <Sheet>
-        <SheetTrigger asChild>
+      <Dialog>
+        <DialogTrigger asChild>
           <Button variant="ghost" size="icon" className="rounded-full text-primary hover:text-primary hover:bg-primary/10 relative">
             <Bot className="h-5 w-5" />
             <span className="absolute top-0 right-0 flex h-2 w-2">
@@ -159,18 +159,18 @@ export function NovaChat() {
             </span>
             <span className="sr-only">Toggle F.R.I.D.A.Y. AI</span>
           </Button>
-        </SheetTrigger>
-        <SheetContent className="flex flex-col">
-          <SheetHeader className="flex-row justify-between items-center">
-            <SheetTitle className="flex items-center gap-2 text-primary">
+        </DialogTrigger>
+        <DialogContent className="h-4/5 max-h-[800px] w-[90vw] max-w-[600px] flex flex-col bg-cyber-gray/80 backdrop-blur-lg border-primary/50">
+          <DialogHeader className="flex-row justify-between items-center">
+            <DialogTitle className="flex items-center gap-2 text-primary">
               <Bot /> F.R.I.D.A.Y. - Your Personal Companion
-            </SheetTitle>
+            </DialogTitle>
             <Button variant="ghost" size="icon" onClick={() => setIsAudioEnabled(!isAudioEnabled)}>
                   {isAudioEnabled ? <Volume2 className="h-5 w-5"/> : <VolumeX className="h-5 w-5"/>}
                   <span className="sr-only">{isAudioEnabled ? 'Disable Audio' : 'Enable Audio'}</span>
               </Button>
-          </SheetHeader>
-          <div className="flex-1 flex flex-col justify-between h-[calc(100%-4rem)]">
+          </DialogHeader>
+          <div className="flex-1 flex flex-col justify-between h-full min-h-0">
             <ScrollArea className="flex-1 p-4 -mx-4">
               <div className="space-y-4">
                 {messages.map((message) => (
@@ -228,8 +228,8 @@ export function NovaChat() {
             </div>
           </div>
           {audioUrl && <audio ref={audioRef} src={audioUrl} />}
-        </SheetContent>
-      </Sheet>
+        </DialogContent>
+      </Dialog>
       {isListeningView && <VoiceListeningUI stopListening={stopListening} />}
     </>
   );
