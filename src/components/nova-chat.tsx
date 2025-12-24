@@ -68,7 +68,6 @@ export function NovaChat() {
     setMessages(prev => [...prev, newUserMessage]);
     setInput('');
     setIsThinking(true);
-    setAudioUrl(null); // Clear previous audio
 
     let response: string;
     try {
