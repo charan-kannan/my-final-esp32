@@ -19,6 +19,13 @@ interface Message {
   sender: 'user' | 'friday';
 }
 
+declare global {
+  interface Window {
+    SpeechRecognition: any;
+    webkitSpeechRecognition: any;
+  }
+}
+
 export function NovaChat() {
   const [messages, setMessages] = useState<Message[]>([
     { id: 1, text: "Good day. I am F.R.I.D.A.Y. How can I assist you?", sender: 'friday' },
@@ -27,7 +34,10 @@ export function NovaChat() {
   const [isThinking, setIsThinking] = useState(false);
   const [isAudioEnabled, setIsAudioEnabled] = useState(true);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
+  const [isRecording, setIsRecording] = useState(false);
+
   const audioRef = useRef<HTMLAudioElement>(null);
+  const recognitionRef = useRef<any>(null);
   const { sensors } = useSensorData();
 
   const playAudio = async (text: string) => {
@@ -39,6 +49,30 @@ export function NovaChat() {
       console.error("Error generating speech", e);
     }
   }
+
+  useEffect(() => {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (SpeechRecognition) {
+      recognitionRef.current = new SpeechRecognition();
+      recognitionRef.current.continuous = false;
+      recognitionRef.current.interimResults = false;
+      recognitionRef.current.lang = 'en-US';
+
+      recognitionRef.current.onresult = (event: any) => {
+        const transcript = event.results[0][0].transcript;
+        setInput(transcript);
+      };
+
+      recognitionRef.current.onerror = (event: any) => {
+        console.error("Speech recognition error", event.error);
+        setIsRecording(false);
+      };
+      
+      recognitionRef.current.onend = () => {
+        setIsRecording(false);
+      };
+    }
+  }, []);
 
   useEffect(() => {
     if (audioUrl && audioRef.current) {
@@ -85,6 +119,15 @@ export function NovaChat() {
     setMessages(prev => [...prev, newFridayMessage]);
     
     playAudio(response);
+  };
+  
+  const handleMicClick = () => {
+    if (isRecording) {
+      recognitionRef.current?.stop();
+    } else {
+      recognitionRef.current?.start();
+    }
+    setIsRecording(!isRecording);
   };
 
   return (
@@ -150,8 +193,8 @@ export function NovaChat() {
             </div>
           </ScrollArea>
           <div className="flex items-center gap-2 border-t pt-4">
-            <Button variant="ghost" size="icon" disabled>
-              <Mic className="h-5 w-5" />
+            <Button variant="ghost" size="icon" onClick={handleMicClick} disabled={!recognitionRef.current || isThinking}>
+              <Mic className={cn("h-5 w-5", isRecording && "text-destructive animate-pulse")} />
             </Button>
             <Input
               value={input}
