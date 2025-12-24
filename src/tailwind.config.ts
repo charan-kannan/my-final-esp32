@@ -99,11 +99,11 @@ export default {
         'pulse-glow': {
           '0%, 100%': {
             opacity: '1',
-            boxShadow: '0 0 10px hsl(var(--primary))',
+            boxShadow: '0 0 20px hsl(var(--primary) / 0.4)',
           },
           '50%': {
-            opacity: '0.7',
-            boxShadow: '0 0 25px hsl(var(--primary))',
+            opacity: '0.8',
+            boxShadow: '0 0 40px hsl(var(--primary) / 0.6)',
           },
         },
         'sound-wave': {
@@ -113,16 +113,65 @@ export default {
         'pulse-fast': {
             '0%, 100%': { opacity: '1' },
             '50%': { opacity: '0.5' },
+        },
+        'spin-slow': {
+          '0%': { transform: 'rotate(0deg)' },
+          '100%': { transform: 'rotate(360deg)' },
+        },
+        'ring-pulse': {
+          '0%, 100%': { transform: 'scale(1)', opacity: '0.3' },
+          '50%': { transform: 'scale(1.05)', opacity: '0.7' },
+        },
+        'sphere-pulse': {
+          '0%, 100%': { transform: 'scale(1)', boxShadow: '0 0 30px -10px hsl(var(--primary))' },
+          '50%': { transform: 'scale(1.02)', boxShadow: '0 0 50px 0px hsl(var(--primary))' },
+        },
+        'float': {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-10px)' },
+        },
+        'particles': {
+          '0%, 100%': { transform: 'scale(1) rotate(0deg)', opacity: '0.2' },
+          '50%': { transform: 'scale(1.05) rotate(180deg)', opacity: '0.5' },
         }
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
-        'pulse-glow': 'pulse-glow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+        'pulse-glow': 'pulse-glow 3s ease-in-out infinite',
         'sound-wave': 'sound-wave 1.2s infinite ease-in-out',
         'pulse-fast': 'pulse-fast 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+        'spin-slow': 'spin-slow 20s linear infinite',
+        'ring-pulse': 'ring-pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+        'sphere-pulse': 'sphere-pulse 5s ease-in-out infinite',
+        'float': 'float 6s ease-in-out infinite',
+        'particles': 'particles 30s linear infinite',
       },
+      dropShadow: {
+        'glow-primary': '0 0 10px hsl(var(--primary))',
+        'glow-chart-1': '0 0 10px hsl(var(--chart-1))',
+        'glow-chart-2': '0 0 10px hsl(var(--chart-2))',
+        'glow-chart-3': '0 0 10px hsl(var(--chart-3))',
+        'glow-chart-4': '0 0 10px hsl(var(--chart-4))',
+        'glow-chart-5': '0 0 10px hsl(var(--chart-5))',
+      }
     },
   },
-  plugins: [require('tailwindcss-animate')],
+  plugins: [
+    require('tailwindcss-animate'),
+    function ({ addUtilities }) {
+      addUtilities({
+        '.bg-grid-pattern': {
+          backgroundImage: 'linear-gradient(rgba(0, 255, 255, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 255, 255, 0.1) 1px, transparent 1px)',
+          backgroundSize: '20px 20px',
+        },
+        '.animation-delay-200': {
+          'animation-delay': '0.2s',
+        },
+        '.animation-delay-400': {
+          'animation-delay': '0.4s',
+        },
+      })
+    }
+  ],
 } satisfies Config;
