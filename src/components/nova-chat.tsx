@@ -36,6 +36,7 @@ export function NovaChat() {
   const [isAudioEnabled, setIsAudioEnabled] = useState(true);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [isListeningView, setIsListeningView] = useState(false);
+  const [initialGreetingPlayed, setInitialGreetingPlayed] = useState(false);
 
   const audioRef = useRef<HTMLAudioElement>(null);
   const recognitionRef = useRef<any>(null);
@@ -87,8 +88,11 @@ export function NovaChat() {
   }, [audioUrl]);
 
   useEffect(() => {
-    // Play the initial greeting
-    playAudio(messages[0].text);
+    // Play the initial greeting only once
+    if (!initialGreetingPlayed) {
+      playAudio(messages[0].text);
+      setInitialGreetingPlayed(true);
+    }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
