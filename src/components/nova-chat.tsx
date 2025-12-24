@@ -11,8 +11,9 @@ import { cn } from '@/lib/utils';
 import { emotionalSupportConversation } from '@/ai/flows/emotional-support-conversations';
 import { getSensorSummary } from '@/ai/flows/voice-controlled-status-updates';
 import { textToSpeech } from '@/ai/flows/text-to-speech';
-import { useSensorData } from '@/hooks/use-sensor-data';
+import { SENSOR_TYPES, SENSOR_THRESHOLDS } from '@/lib/constants';
 import { VoiceListeningUI } from './voice-listening-ui';
+import type { SensorData } from '@/lib/types';
 
 interface Message {
   id: number;
@@ -27,6 +28,25 @@ declare global {
   }
 }
 
+// Function to get current sensor data when needed
+const getCurrentSensorData = (): SensorData[] => {
+    return SENSOR_TYPES.map((type, index) => {
+      const { min, max, unit } = SENSOR_THRESHOLDS[type];
+      // Simulate some value fluctuation for realism
+      const value = min + (max - min) * (0.4 + Math.random() * 0.2); 
+      return {
+        id: index,
+        type: type,
+        value: value,
+        unit: unit,
+        riskLevel: 'SAFE', // Simplified for this context
+        history: [],
+        min,
+        max,
+      };
+    });
+  };
+
 export function NovaChat() {
   const [messages, setMessages] = useState<Message[]>([
     { id: 1, text: "Good day. I am F.R.I.D.A.Y. How can I assist you?", sender: 'friday' },
@@ -38,14 +58,44 @@ export function NovaChat() {
   const [isListeningView, setIsListeningView] = useState(false);
   const [initialGreetingPlayed, setInitialGreetingPlayed] = useState(false);
   
-  // We will call the hook inside the handler, not here.
-  // const { sensors: latestSensors } = useSensorData(); 
-
   const audioRef = useRef<HTMLAudioElement>(null);
   const recognitionRef = useRef<any>(null);
-  const { sensors: latestSensors } = useSensorData();
-  
 
+  const handleSend = async (messageText: string) => {
+    if (messageText.trim() === '') return;
+
+    const newUserMessage: Message = { id: Date.now(), text: messageText, sender: 'user' };
+    setMessages(prev => [...prev, newUserMessage]);
+    setInput('');
+    setIsThinking(true);
+    setAudioUrl(null); // Clear previous audio
+
+    let response: string;
+    try {
+      if (messageText.toLowerCase().includes('status update')) {
+        const sensorData = getCurrentSensorData();
+        const sensorDataObject = sensorData.reduce((acc, sensor) => {
+            acc[sensor.type] = `${sensor.value.toFixed(2)} ${sensor.unit}`;
+            return acc;
+        }, {} as Record<string, string>);
+        const res = await getSensorSummary({ voiceCommand: messageText, sensorData: sensorDataObject });
+        response = res.summary;
+      } else {
+        const res = await emotionalSupportConversation({ message: messageText });
+        response = res.response;
+      }
+    } catch (error) {
+        console.error("AI flow error:", error);
+        response = "I'm having a little trouble connecting right now. Please try again in a moment.";
+    }
+
+    setIsThinking(false);
+    const newFridayMessage: Message = { id: Date.now() + 1, text: response, sender: 'friday' };
+    setMessages(prev => [...prev, newFridayMessage]);
+    
+    playAudio(response);
+  };
+  
   const playAudio = async (text: string) => {
     if (!isAudioEnabled) return;
     try {
@@ -66,8 +116,8 @@ export function NovaChat() {
 
       recognitionRef.current.onresult = (event: any) => {
         const transcript = event.results[0][0].transcript;
-        setInput(transcript);
         setIsListeningView(false); // Close listening view on result
+        handleSend(transcript); // Automatically send the transcript
       };
 
       recognitionRef.current.onerror = (event: any) => {
@@ -96,40 +146,10 @@ export function NovaChat() {
     }
   }, [initialGreetingPlayed, messages, audioUrl]);
 
-  const handleSend = async () => {
-    if (input.trim() === '') return;
 
-    const newUserMessage: Message = { id: Date.now(), text: input, sender: 'user' };
-    setMessages(prev => [...prev, newUserMessage]);
-    const currentInput = input;
-    setInput('');
-    setIsThinking(true);
-    setAudioUrl(null); // Clear previous audio
-
-    let response: string;
-    try {
-      if (currentInput.toLowerCase().includes('status update')) {
-        const sensorDataObject = latestSensors.reduce((acc, sensor) => {
-            acc[sensor.type] = `${sensor.value.toFixed(2)} ${sensor.unit}`;
-            return acc;
-        }, {} as Record<string, string>);
-        const res = await getSensorSummary({ voiceCommand: currentInput, sensorData: sensorDataObject });
-        response = res.summary;
-      } else {
-        const res = await emotionalSupportConversation({ message: currentInput });
-        response = res.response;
-      }
-    } catch (error) {
-        console.error("AI flow error:", error);
-        response = "I'm having a little trouble connecting right now. Please try again in a moment.";
-    }
-
-    setIsThinking(false);
-    const newFridayMessage: Message = { id: Date.now() + 1, text: response, sender: 'friday' };
-    setMessages(prev => [...prev, newFridayMessage]);
-    
-    playAudio(response);
-  };
+  const handleTextInputSend = () => {
+    handleSend(input);
+  }
   
   const handleMicClick = () => {
     if (recognitionRef.current) {
@@ -218,12 +238,12 @@ export function NovaChat() {
                 <Input
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
-                  onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+                  onKeyDown={(e) => e.key === 'Enter' && handleTextInputSend()}
                   placeholder="Talk to F.R.I.D.A.Y...."
                   className="flex-1"
                   disabled={isThinking}
                 />
-                <Button onClick={handleSend} size="icon" disabled={isThinking}>
+                <Button onClick={handleTextInputSend} size="icon" disabled={isThinking}>
                   <Send className="h-5 w-5" />
                 </Button>
               </div>
