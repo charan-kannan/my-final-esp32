@@ -37,10 +37,13 @@ export function NovaChat() {
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [isListeningView, setIsListeningView] = useState(false);
   const [initialGreetingPlayed, setInitialGreetingPlayed] = useState(false);
-  const { sensors: latestSensors } = useSensorData();
+  
+  // We will call the hook inside the handler, not here.
+  // const { sensors: latestSensors } = useSensorData(); 
 
   const audioRef = useRef<HTMLAudioElement>(null);
   const recognitionRef = useRef<any>(null);
+  const { sensors: latestSensors } = useSensorData();
   
 
   const playAudio = async (text: string) => {
@@ -68,8 +71,6 @@ export function NovaChat() {
       };
 
       recognitionRef.current.onerror = (event: any) => {
-        // The 'no-speech' error is common if the user doesn't say anything.
-        // We can handle it gracefully without logging a console error.
         if (event.error !== 'no-speech') {
           console.error("Speech recognition error", event.error);
         }
@@ -89,13 +90,10 @@ export function NovaChat() {
   }, [audioUrl]);
   
   useEffect(() => {
-    // Play the initial greeting only once when the component mounts
-    // and if the audio hasn't been generated yet.
-    if (!initialGreetingPlayed && !audioUrl) {
+    if (!initialGreetingPlayed && messages[0] && !audioUrl) {
       playAudio(messages[0].text);
       setInitialGreetingPlayed(true);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialGreetingPlayed, messages, audioUrl]);
 
   const handleSend = async () => {
@@ -148,89 +146,92 @@ export function NovaChat() {
   }
 
   return (
-    <>
-      <Dialog>
-        <DialogTrigger asChild>
-          <Button variant="ghost" size="icon" className="rounded-full text-primary hover:text-primary hover:bg-primary/10 relative">
-            <Bot className="h-5 w-5" />
-            <span className="absolute top-0 right-0 flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-accent"></span>
-            </span>
-            <span className="sr-only">Toggle F.R.I.D.A.Y. AI</span>
-          </Button>
-        </DialogTrigger>
-        <DialogContent className="h-4/5 max-h-[800px] w-[90vw] max-w-[600px] flex flex-col bg-cyber-gray/80 backdrop-blur-lg border-primary/50">
-          <DialogHeader className="flex-row justify-between items-center">
-            <DialogTitle className="flex items-center gap-2 text-primary">
-              <Bot /> F.R.I.D.A.Y. - Your Personal Companion
-            </DialogTitle>
-            <Button variant="ghost" size="icon" onClick={() => setIsAudioEnabled(!isAudioEnabled)}>
-                  {isAudioEnabled ? <Volume2 className="h-5 w-5"/> : <VolumeX className="h-5 w-5"/>}
-                  <span className="sr-only">{isAudioEnabled ? 'Disable Audio' : 'Enable Audio'}</span>
-              </Button>
-          </DialogHeader>
-          <div className="flex-1 flex flex-col justify-between h-full min-h-0">
-            <ScrollArea className="flex-1 p-4 -mx-4">
-              <div className="space-y-4">
-                {messages.map((message) => (
-                  <div key={message.id} className={cn('flex items-start gap-3', message.sender === 'user' ? 'justify-end' : 'justify-start')}>
-                    {message.sender === 'friday' && (
-                      <Avatar className="h-8 w-8 border-2 border-primary">
-                        <AvatarFallback>
-                          <Bot className="text-primary" />
-                        </AvatarFallback>
-                      </Avatar>
-                    )}
-                    <div className={cn('max-w-[75%] rounded-lg p-3 text-sm', message.sender === 'user' ? 'bg-primary text-primary-foreground' : 'bg-muted')}>
-                      <p>{message.text}</p>
-                    </div>
-                    {message.sender === 'user' && (
-                      <Avatar className="h-8 w-8 border-2 border-muted-foreground">
-                        <AvatarFallback>
-                          <User />
-                        </AvatarFallback>
-                      </Avatar>
-                    )}
-                  </div>
-                ))}
-                {isThinking && (
-                  <div className="flex items-start gap-3 justify-start">
-                      <Avatar className="h-8 w-8 border-2 border-primary animate-pulse-glow">
-                        <AvatarFallback className="bg-transparent">
-                          <Bot className="text-primary" />
-                        </AvatarFallback>
-                      </Avatar>
-                      <div className="bg-muted rounded-lg p-3 text-sm flex items-end gap-1 h-10">
-                          <div className="w-1 bg-primary/80 rounded-full animate-sound-wave [animation-delay:-0.4s]" style={{height: '80%'}}></div>
-                          <div className="w-1 bg-primary/80 rounded-full animate-sound-wave [animation-delay:-0.2s]" style={{height: '100%'}}></div>
-                          <div className="w-1 bg-primary/80 rounded-full animate-sound-wave" style={{height: '60%'}}></div>
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button variant="ghost" size="icon" className="rounded-full text-primary hover:text-primary hover:bg-primary/10 relative">
+          <Bot className="h-5 w-5" />
+          <span className="absolute top-0 right-0 flex h-2 w-2">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-accent"></span>
+          </span>
+          <span className="sr-only">Toggle F.R.I.D.A.Y. AI</span>
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="h-4/5 max-h-[800px] w-[90vw] max-w-[600px] flex flex-col bg-cyber-gray/80 backdrop-blur-lg border-primary/50">
+        {isListeningView ? (
+          <VoiceListeningUI stopListening={stopListening} />
+        ) : (
+          <>
+            <DialogHeader className="flex-row justify-between items-center">
+              <DialogTitle className="flex items-center gap-2 text-primary">
+                <Bot /> F.R.I.D.A.Y. - Your Personal Companion
+              </DialogTitle>
+              <Button variant="ghost" size="icon" onClick={() => setIsAudioEnabled(!isAudioEnabled)}>
+                    {isAudioEnabled ? <Volume2 className="h-5 w-5"/> : <VolumeX className="h-5 w-5"/>}
+                    <span className="sr-only">{isAudioEnabled ? 'Disable Audio' : 'Enable Audio'}</span>
+                </Button>
+            </DialogHeader>
+            <div className="flex-1 flex flex-col justify-between h-full min-h-0">
+              <ScrollArea className="flex-1 p-4 -mx-4">
+                <div className="space-y-4">
+                  {messages.map((message) => (
+                    <div key={message.id} className={cn('flex items-start gap-3', message.sender === 'user' ? 'justify-end' : 'justify-start')}>
+                      {message.sender === 'friday' && (
+                        <Avatar className="h-8 w-8 border-2 border-primary">
+                          <AvatarFallback>
+                            <Bot className="text-primary" />
+                          </AvatarFallback>
+                        </Avatar>
+                      )}
+                      <div className={cn('max-w-[75%] rounded-lg p-3 text-sm', message.sender === 'user' ? 'bg-primary text-primary-foreground' : 'bg-muted')}>
+                        <p>{message.text}</p>
                       </div>
-                  </div>
-                )}
+                      {message.sender === 'user' && (
+                        <Avatar className="h-8 w-8 border-2 border-muted-foreground">
+                          <AvatarFallback>
+                            <User />
+                          </AvatarFallback>
+                        </Avatar>
+                      )}
+                    </div>
+                  ))}
+                  {isThinking && (
+                    <div className="flex items-start gap-3 justify-start">
+                        <Avatar className="h-8 w-8 border-2 border-primary animate-pulse-glow">
+                          <AvatarFallback className="bg-transparent">
+                            <Bot className="text-primary" />
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="bg-muted rounded-lg p-3 text-sm flex items-end gap-1 h-10">
+                            <div className="w-1 bg-primary/80 rounded-full animate-sound-wave [animation-delay:-0.4s]" style={{height: '80%'}}></div>
+                            <div className="w-1 bg-primary/80 rounded-full animate-sound-wave [animation-delay:-0.2s]" style={{height: '100%'}}></div>
+                            <div className="w-1 bg-primary/80 rounded-full animate-sound-wave" style={{height: '60%'}}></div>
+                        </div>
+                    </div>
+                  )}
+                </div>
+              </ScrollArea>
+              <div className="flex items-center gap-2 border-t pt-4">
+                <Button variant="ghost" size="icon" onClick={handleMicClick} disabled={!recognitionRef.current || isThinking}>
+                  <Mic className="h-5 w-5" />
+                </Button>
+                <Input
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+                  placeholder="Talk to F.R.I.D.A.Y...."
+                  className="flex-1"
+                  disabled={isThinking}
+                />
+                <Button onClick={handleSend} size="icon" disabled={isThinking}>
+                  <Send className="h-5 w-5" />
+                </Button>
               </div>
-            </ScrollArea>
-            <div className="flex items-center gap-2 border-t pt-4">
-              <Button variant="ghost" size="icon" onClick={handleMicClick} disabled={!recognitionRef.current || isThinking}>
-                <Mic className="h-5 w-5" />
-              </Button>
-              <Input
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-                placeholder="Talk to F.R.I.D.A.Y...."
-                className="flex-1"
-                disabled={isThinking}
-              />
-              <Button onClick={handleSend} size="icon" disabled={isThinking}>
-                <Send className="h-5 w-5" />
-              </Button>
             </div>
-          </div>
-          {audioUrl && <audio ref={audioRef} src={audioUrl} />}
-        </DialogContent>
-      </Dialog>
-      {isListeningView && <VoiceListeningUI stopListening={stopListening} />}
-    </>
+          </>
+        )}
+        {audioUrl && <audio ref={audioRef} src={audioUrl} />}
+      </DialogContent>
+    </Dialog>
   );
 }

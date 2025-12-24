@@ -4,7 +4,7 @@ import { Mic } from 'lucide-react';
 
 export function VoiceListeningUI({ stopListening }: { stopListening: () => void }) {
   return (
-    <div className="fixed inset-0 z-[100] bg-cyber-gray/80 backdrop-blur-xl flex flex-col items-center justify-center">
+    <div className="flex flex-col items-center justify-center w-full h-full">
       <div className="text-primary uppercase tracking-widest text-lg font-display mb-8 animate-pulse-fast">
         Listening...
       </div>
