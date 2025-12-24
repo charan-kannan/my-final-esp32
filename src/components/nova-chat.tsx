@@ -66,7 +66,11 @@ export function NovaChat() {
       };
 
       recognitionRef.current.onerror = (event: any) => {
-        console.error("Speech recognition error", event.error);
+        // The 'no-speech' error is common if the user doesn't say anything.
+        // We can handle it gracefully without logging a console error.
+        if (event.error !== 'no-speech') {
+          console.error("Speech recognition error", event.error);
+        }
         setIsListeningView(false);
       };
       
