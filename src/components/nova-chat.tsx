@@ -139,11 +139,11 @@ export function NovaChat() {
   }, [audioUrl]);
   
   useEffect(() => {
-    if (!initialGreetingPlayed && messages[0] && !audioUrl) {
+    if (!initialGreetingPlayed && messages[0]) {
       playAudio(messages[0].text);
       setInitialGreetingPlayed(true);
     }
-  }, [initialGreetingPlayed, messages, audioUrl]);
+  }, [initialGreetingPlayed, messages]);
 
 
   const handleTextInputSend = () => {
@@ -178,7 +178,9 @@ export function NovaChat() {
       </DialogTrigger>
       <DialogContent className="h-4/5 max-h-[800px] w-[90vw] max-w-[600px] flex flex-col bg-cyber-gray/80 backdrop-blur-lg border-primary/50">
         {isListeningView ? (
-          <VoiceListeningUI stopListening={stopListening} />
+          <div className="flex flex-col items-center justify-center w-full h-full">
+            <VoiceListeningUI stopListening={stopListening} />
+          </div>
         ) : (
           <>
             <DialogHeader className="flex-row justify-between items-center">
