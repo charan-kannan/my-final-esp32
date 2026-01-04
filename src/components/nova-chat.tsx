@@ -48,7 +48,7 @@ const getCurrentSensorData = (): SensorData[] => {
   };
 
 export function NovaChat() {
-  const [messages, setMessages] = useState<Message[]>([
+  const [messages, setMessages] = useState<Message[]>(() => [
     { id: 1, text: "Good day. I am F.R.I.D.A.Y. How can I assist you?", sender: 'friday' },
   ]);
   const [input, setInput] = useState('');
@@ -56,7 +56,6 @@ export function NovaChat() {
   const [isAudioEnabled, setIsAudioEnabled] = useState(true);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [isListeningView, setIsListeningView] = useState(false);
-  const [initialGreetingPlayed, setInitialGreetingPlayed] = useState(false);
   
   const audioRef = useRef<HTMLAudioElement>(null);
   const recognitionRef = useRef<any>(null);
@@ -104,6 +103,12 @@ export function NovaChat() {
       console.error("Error generating speech", e);
     }
   }
+  
+  // This effect runs only once on mount to play the initial greeting
+  useEffect(() => {
+    playAudio("Good day. I am F.R.I.D.A.Y. How can I assist you?");
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -134,17 +139,10 @@ export function NovaChat() {
 
   useEffect(() => {
     if (audioUrl && audioRef.current) {
+        audioRef.current.src = audioUrl;
         audioRef.current.play().catch(e => console.error("Audio playback failed", e));
     }
   }, [audioUrl]);
-  
-  useEffect(() => {
-    if (!initialGreetingPlayed && messages[0]) {
-      playAudio(messages[0].text);
-      setInitialGreetingPlayed(true);
-    }
-  }, [initialGreetingPlayed, messages]);
-
 
   const handleTextInputSend = () => {
     handleSend(input);
@@ -251,7 +249,7 @@ export function NovaChat() {
             </div>
           </>
         )}
-        {audioUrl && <audio ref={audioRef} src={audioUrl} />}
+        <audio ref={audioRef} />
       </DialogContent>
     </Dialog>
   );
