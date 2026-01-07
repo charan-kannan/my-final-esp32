@@ -91,7 +91,7 @@ export function NovaChat() {
     const newFridayMessage: Message = { id: Date.now() + 1, text: response, sender: 'friday' };
     setMessages(prev => [...prev, newFridayMessage]);
     
-    playAudio(response);
+    // playAudio(response);
   };
   
   const playAudio = async (text: string) => {
@@ -106,7 +106,7 @@ export function NovaChat() {
   
   // This effect runs only once on mount to play the initial greeting
   useEffect(() => {
-    playAudio("Good day. I am F.R.I.D.A.Y. How can I assist you?");
+    // playAudio("Good day. I am F.R.I.D.A.Y. How can I assist you?");
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
