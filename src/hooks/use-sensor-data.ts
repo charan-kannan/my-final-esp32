@@ -47,7 +47,7 @@ export function useSensorData(user: User | null, settings: SettingsContextType) 
   }, [sensors]);
 
   const triggerNotifications = useCallback((newSensorState: SensorData, oldSensorState: SensorData | undefined) => {
-    if (!user || !oldSensorState) return;
+    if (!user || !oldSensorState || !settings) return;
 
     const becameDanger = newSensorState.riskLevel === 'DANGER' && oldSensorState.riskLevel !== 'DANGER';
 
@@ -60,7 +60,10 @@ export function useSensorData(user: User | null, settings: SettingsContextType) 
         });
       }
       if (settings.emailAlerts && user.email) {
-        console.log(`Sending email for ${newSensorState.type}...`);
+        toast({
+          title: "Simulating Email Alert",
+          description: `An alert for ${newSensorState.type} would be sent to ${user.email}.`
+        });
         sendAlertNotification({
             userEmail: user.email,
             sensorType: newSensorState.type,
@@ -73,7 +76,7 @@ export function useSensorData(user: User | null, settings: SettingsContextType) 
         });
       }
     }
-  }, [user, settings.pushAlerts, settings.emailAlerts, toast]);
+  }, [user, settings, toast]);
 
 
   const updateSensorData = useCallback(() => {
@@ -99,7 +102,6 @@ export function useSensorData(user: User | null, settings: SettingsContextType) 
         };
       });
 
-      // Check for state changes and trigger notifications
       newSensors.forEach(newSensor => {
         const oldSensor = previousSensorsRef.current.find(s => s.id === newSensor.id);
         triggerNotifications(newSensor, oldSensor);
