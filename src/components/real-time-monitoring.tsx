@@ -8,6 +8,8 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsi
 import { cn } from '@/lib/utils';
 import { Skeleton } from './ui/skeleton';
 import { Activity } from 'lucide-react';
+import { useUser } from '@/firebase';
+import { useSettings } from './settings-provider';
 
 const SENSORS_TO_MONITOR = ["Temperature", "Humidity", "Gas", "Air Quality", "Noise", "Light"] as const;
 type SensorToMonitor = typeof SENSORS_TO_MONITOR[number];
@@ -22,7 +24,9 @@ const sensorColors: Record<SensorToMonitor, string> = {
 };
 
 export function RealTimeMonitoring() {
-  const { sensors, isLoading } = useSensorData();
+  const { user } = useUser();
+  const settings = useSettings();
+  const { sensors, isLoading } = useSensorData(user, settings);
   const [activeSensors, setActiveSensors] = useState<SensorToMonitor[]>(["Temperature", "Humidity"]);
 
   const toggleSensor = (sensorType: SensorToMonitor) => {
