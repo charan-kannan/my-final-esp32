@@ -7,15 +7,6 @@ import { Wifi, WifiOff } from 'lucide-react';
 export function DeviceStatus() {
   const [isConnected, setIsConnected] = useState(true);
 
-  useEffect(() => {
-    // Simulate connection status toggling
-    const interval = setInterval(() => {
-      setIsConnected(prev => !prev);
-    }, 5000); 
-
-    return () => clearInterval(interval);
-  }, []);
-
   return (
     <div className="flex items-center gap-2 rounded-md border border-cyber-subtle bg-cyber-gray/50 px-3 py-1 backdrop-blur-sm">
       <span
