@@ -23,7 +23,7 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'GuardianAngel AI',
+  title: 'HAZARDAVERT AI',
   description: 'A next-gen smart home safety + emotional companion platform.',
 };
 
