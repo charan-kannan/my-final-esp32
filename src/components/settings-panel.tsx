@@ -11,7 +11,6 @@ import { Slider } from './ui/slider';
 import { useSettings } from './settings-provider';
 import { ScrollArea } from './ui/scroll-area';
 import { useTheme } from 'next-themes';
-import { cn } from '@/lib/utils';
 
 export function SettingsPanel() {
     const { 
@@ -66,13 +65,13 @@ export function SettingsPanel() {
                      <div className="space-y-2">
                         <Label>Theme</Label>
                         <div className="flex items-center gap-2">
-                            <Button variant={theme === 'light' ? 'default' : 'outline'} size="icon" onClick={() => setTheme('light')}>
+                            <Button variant={theme === 'light' ? 'secondary' : 'outline'} size="icon" onClick={() => setTheme('light')}>
                                 <Sun className="h-5 w-5" />
                             </Button>
-                             <Button variant={theme === 'dark' ? 'default' : 'outline'} size="icon" onClick={() => setTheme('dark')}>
+                             <Button variant={theme === 'dark' ? 'secondary' : 'outline'} size="icon" onClick={() => setTheme('dark')}>
                                 <Moon className="h-5 w-5" />
                             </Button>
-                             <Button variant={theme === 'system' ? 'default' : 'outline'} size="icon" onClick={() => setTheme('system')}>
+                             <Button variant={theme === 'system' ? 'secondary' : 'outline'} size="icon" onClick={() => setTheme('system')}>
                                 <Monitor className="h-5 w-5" />
                             </Button>
                         </div>
