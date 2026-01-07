@@ -11,14 +11,14 @@ import { Activity } from 'lucide-react';
 import { useUser } from '@/firebase';
 import { useSettings } from './settings-provider';
 
-const SENSORS_TO_MONITOR = ["EM Radiation", "Gas", "Air Quality", "Temperature", "Humidity", "Noise", "Light"] as const;
+const SENSORS_TO_MONITOR = ["EM Radiation", "Gas/Smoke", "Air Quality", "Temperature", "Humidity", "Noise", "Light"] as const;
 type SensorToMonitor = typeof SENSORS_TO_MONITOR[number];
 
 const sensorColors: Record<SensorToMonitor, string> = {
   "Temperature": 'hsl(var(--chart-1))',
   "Humidity": 'hsl(var(--chart-2))',
   "Air Quality": 'hsl(var(--chart-3))',
-  "Gas": 'hsl(var(--chart-4))',
+  "Gas/Smoke": 'hsl(var(--chart-4))',
   "Noise": 'hsl(var(--chart-5))',
   "Light": 'hsl(var(--chart-6))',
   "EM Radiation": 'hsl(var(--primary))',

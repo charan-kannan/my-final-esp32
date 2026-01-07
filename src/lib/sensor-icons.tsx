@@ -6,7 +6,7 @@ export const sensorIcons: Record<SensorType, LucideIcon> = {
   "Temperature": Thermometer,
   "Humidity": Droplets,
   "Air Quality": Leaf,
-  "Gas": Flame,
+  "Gas/Smoke": Flame,
   "Noise": Volume2,
   "Light": Sun,
   "EM Radiation": RadioTower,

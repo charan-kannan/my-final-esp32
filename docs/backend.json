@@ -43,7 +43,7 @@
         },
         "sensorType": {
           "type": "string",
-          "description": "The type of sensor (e.g., gas, air quality, temperature)."
+          "description": "The type of sensor (e.g., gas/smoke, air quality, temperature)."
         },
         "sensorValue": {
           "type": "number",

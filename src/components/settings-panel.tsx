@@ -88,7 +88,7 @@ export function SettingsPanel() {
                         <Slider id="em-sensitivity" defaultValue={[50]} max={100} step={1} />
                     </div>
                      <div className="space-y-2">
-                        <Label htmlFor="gas-sensitivity">Gas Sensor Sensitivity</Label>
+                        <Label htmlFor="gas-sensitivity">Gas/Smoke Sensor Sensitivity</Label>
                         <Slider id="gas-sensitivity" defaultValue={[50]} max={100} step={1} />
                     </div>
                     <div className="space-y-2">

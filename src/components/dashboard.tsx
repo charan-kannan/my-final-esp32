@@ -12,7 +12,7 @@ export function Dashboard() {
   const { sensors, isLoading } = useSensorData(user, settings);
   const { decimalPrecision } = settings;
 
-  const displayedSensors = ["EM Radiation", "Gas", "Air Quality", "Temperature", "Humidity", "Noise", "Light"];
+  const displayedSensors = ["EM Radiation", "Gas/Smoke", "Air Quality", "Temperature", "Humidity", "Noise", "Light"];
 
   return (
     <>
