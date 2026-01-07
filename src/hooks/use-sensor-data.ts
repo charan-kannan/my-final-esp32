@@ -78,50 +78,48 @@ export function useSensorData(user: User | null, settings: SettingsContextType) 
     }
   }, [user, settings, toast]);
 
-
-  const updateSensorData = useCallback(() => {
-    setSensors(currentSensors => {
-      const newSensors = currentSensors.map(sensor => {
-        const { min, max } = SENSOR_THRESHOLDS[sensor.type];
-        const change = (Math.random() - 0.5) * (max - min) * 0.1;
-        let newValue = sensor.value + change;
-        if (newValue > max) newValue = max;
-        if (newValue < min) newValue = min;
-
-        const newRiskLevel = getRiskLevel(sensor.type, newValue);
-        const newHistory = [
-          ...sensor.history.slice(1),
-          { time: new Date().toISOString(), value: newValue },
-        ];
-
-        return {
-          ...sensor,
-          value: newValue,
-          riskLevel: newRiskLevel,
-          history: newHistory,
-        };
-      });
-
-      newSensors.forEach(newSensor => {
-        const oldSensor = previousSensorsRef.current.find(s => s.id === newSensor.id);
-        triggerNotifications(newSensor, oldSensor);
-      });
-
-      return newSensors;
-    });
-  }, [triggerNotifications]);
-
   useEffect(() => {
-    if (!isInitialized) {
-      const initialSensors = generateInitialSensors();
-      setSensors(initialSensors);
-      previousSensorsRef.current = initialSensors;
-      setIsInitialized(true);
-    }
+    const initialSensors = generateInitialSensors();
+    setSensors(initialSensors);
+    previousSensorsRef.current = initialSensors;
+    setIsInitialized(true);
     
+    const updateSensorData = () => {
+        setSensors(currentSensors => {
+          const newSensors = currentSensors.map(sensor => {
+            const { min, max } = SENSOR_THRESHOLDS[sensor.type];
+            const change = (Math.random() - 0.5) * (max - min) * 0.1;
+            let newValue = sensor.value + change;
+            if (newValue > max) newValue = max;
+            if (newValue < min) newValue = min;
+    
+            const newRiskLevel = getRiskLevel(sensor.type, newValue);
+            const newHistory = [
+              ...sensor.history.slice(1),
+              { time: new Date().toISOString(), value: newValue },
+            ];
+    
+            return {
+              ...sensor,
+              value: newValue,
+              riskLevel: newRiskLevel,
+              history: newHistory,
+            };
+          });
+    
+          newSensors.forEach(newSensor => {
+            const oldSensor = previousSensorsRef.current.find(s => s.id === newSensor.id);
+            triggerNotifications(newSensor, oldSensor);
+          });
+    
+          return newSensors;
+        });
+      };
+
     const interval = setInterval(updateSensorData, 2000);
     return () => clearInterval(interval);
-  }, [isInitialized, updateSensorData]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [triggerNotifications]);
 
   return { sensors, isLoading: !isInitialized };
 }
