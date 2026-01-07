@@ -49,7 +49,7 @@ const getCurrentSensorData = (): SensorData[] => {
 
 export function NovaChat() {
   const [messages, setMessages] = useState<Message[]>(() => [
-    { id: 1, text: "Good day. I am F.R.I.D.A.Y. How can I assist you?", sender: 'friday' },
+    { id: 1, text: "I'm F.R.I.D.A.Y. Click the mic and tell me how I can help.", sender: 'friday' },
   ]);
   const [input, setInput] = useState('');
   const [isThinking, setIsThinking] = useState(false);
@@ -97,8 +97,8 @@ export function NovaChat() {
   const playAudio = async (text: string) => {
     if (!isAudioEnabled) return;
     try {
-      const { audio } = await textToSpeech({ text });
-      setAudioUrl(audio);
+      // const { audio } = await textToSpeech({ text });
+      // setAudioUrl(audio);
     } catch(e) {
       console.error("Error generating speech", e);
     }
