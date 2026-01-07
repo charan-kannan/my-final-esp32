@@ -84,6 +84,18 @@ export function SettingsPanel() {
                     <h3 className="text-lg font-medium">Sensor Calibration</h3>
                      <p className="text-sm text-muted-foreground">Adjust sensor sensitivity. (Simulated)</p>
                      <div className="space-y-2">
+                        <Label htmlFor="em-sensitivity">EM Radiation Sensor Sensitivity</Label>
+                        <Slider id="em-sensitivity" defaultValue={[50]} max={100} step={1} />
+                    </div>
+                     <div className="space-y-2">
+                        <Label htmlFor="gas-sensitivity">Gas Sensor Sensitivity</Label>
+                        <Slider id="gas-sensitivity" defaultValue={[50]} max={100} step={1} />
+                    </div>
+                    <div className="space-y-2">
+                        <Label htmlFor="air-quality-sensitivity">Air Quality Sensor Sensitivity</Label>
+                        <Slider id="air-quality-sensitivity" defaultValue={[50]} max={100} step={1} />
+                    </div>
+                    <div className="space-y-2">
                         <Label htmlFor="temp-sensitivity">Temperature Sensor Sensitivity</Label>
                         <Slider id="temp-sensitivity" defaultValue={[50]} max={100} step={1} />
                     </div>
@@ -92,24 +104,12 @@ export function SettingsPanel() {
                         <Slider id="humidity-sensitivity" defaultValue={[50]} max={100} step={1} />
                     </div>
                     <div className="space-y-2">
-                        <Label htmlFor="air-quality-sensitivity">Air Quality Sensor Sensitivity</Label>
-                        <Slider id="air-quality-sensitivity" defaultValue={[50]} max={100} step={1} />
-                    </div>
-                    <div className="space-y-2">
-                        <Label htmlFor="gas-sensitivity">Gas Sensor Sensitivity</Label>
-                        <Slider id="gas-sensitivity" defaultValue={[50]} max={100} step={1} />
-                    </div>
-                    <div className="space-y-2">
                         <Label htmlFor="noise-sensitivity">Noise Sensor Sensitivity</Label>
                         <Slider id="noise-sensitivity" defaultValue={[50]} max={100} step={1} />
                     </div>
                     <div className="space-y-2">
                         <Label htmlFor="light-sensitivity">Light Sensor Sensitivity</Label>
                         <Slider id="light-sensitivity" defaultValue={[50]} max={100} step={1} />
-                    </div>
-                     <div className="space-y-2">
-                        <Label htmlFor="em-sensitivity">EM Radiation Sensor Sensitivity</Label>
-                        <Slider id="em-sensitivity" defaultValue={[50]} max={100} step={1} />
                     </div>
                 </div>
             </div>

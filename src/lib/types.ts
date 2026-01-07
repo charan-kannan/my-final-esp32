@@ -2,7 +2,7 @@ import type { LucideIcon } from "lucide-react";
 
 export type RiskLevel = "SAFE" | "CAUTION" | "DANGER";
 
-export type SensorType = "Temperature" | "Humidity" | "Air Quality" | "Gas" | "Noise" | "Light" | "EM Radiation";
+export type SensorType = "EM Radiation" | "Gas" | "Air Quality" | "Temperature" | "Humidity" | "Noise" | "Light";
 
 export type SensorData = {
   id: number;

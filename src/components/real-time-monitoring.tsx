@@ -11,7 +11,7 @@ import { Activity } from 'lucide-react';
 import { useUser } from '@/firebase';
 import { useSettings } from './settings-provider';
 
-const SENSORS_TO_MONITOR = ["Temperature", "Humidity", "Gas", "Air Quality", "Noise", "Light"] as const;
+const SENSORS_TO_MONITOR = ["EM Radiation", "Gas", "Air Quality", "Temperature", "Humidity", "Noise", "Light"] as const;
 type SensorToMonitor = typeof SENSORS_TO_MONITOR[number];
 
 const sensorColors: Record<SensorToMonitor, string> = {
@@ -21,6 +21,7 @@ const sensorColors: Record<SensorToMonitor, string> = {
   "Gas": 'hsl(var(--chart-4))',
   "Noise": 'hsl(var(--chart-5))',
   "Light": 'hsl(var(--chart-6))',
+  "EM Radiation": 'hsl(var(--primary))',
 };
 
 export function RealTimeMonitoring() {
