@@ -5,7 +5,7 @@ import { cn } from '@/lib/utils';
 import { Toaster } from '@/components/ui/toaster';
 import { FirebaseClientProvider } from '@/firebase';
 import { SettingsProvider } from '@/components/settings-provider';
-import { ThemeProvider } from '@/components/theme-provider';
+import { ThemeProvider } from "next-themes";
 
 const spaceGrotesk = Space_Grotesk({
   subsets: ['latin'],
