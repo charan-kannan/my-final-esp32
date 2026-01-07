@@ -2,7 +2,7 @@
 
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription, SheetTrigger } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
-import { Settings } from 'lucide-react';
+import { Settings, Moon, Sun, Monitor } from 'lucide-react';
 import { UserProfile } from './user-profile';
 import { Separator } from './ui/separator';
 import { Label } from './ui/label';
@@ -10,6 +10,8 @@ import { Switch } from './ui/switch';
 import { Slider } from './ui/slider';
 import { useSettings } from './settings-provider';
 import { ScrollArea } from './ui/scroll-area';
+import { useTheme } from 'next-themes';
+import { cn } from '@/lib/utils';
 
 export function SettingsPanel() {
     const { 
@@ -20,6 +22,7 @@ export function SettingsPanel() {
         decimalPrecision,
         setDecimalPrecision
     } = useSettings();
+    const { theme, setTheme } = useTheme();
 
   return (
     <Sheet>
@@ -60,6 +63,20 @@ export function SettingsPanel() {
                 <Separator />
                 <div className="space-y-4">
                     <h3 className="text-lg font-medium">Customization</h3>
+                     <div className="space-y-2">
+                        <Label>Theme</Label>
+                        <div className="flex items-center gap-2">
+                            <Button variant={theme === 'light' ? 'default' : 'outline'} size="icon" onClick={() => setTheme('light')}>
+                                <Sun className="h-5 w-5" />
+                            </Button>
+                             <Button variant={theme === 'dark' ? 'default' : 'outline'} size="icon" onClick={() => setTheme('dark')}>
+                                <Moon className="h-5 w-5" />
+                            </Button>
+                             <Button variant={theme === 'system' ? 'default' : 'outline'} size="icon" onClick={() => setTheme('system')}>
+                                <Monitor className="h-5 w-5" />
+                            </Button>
+                        </div>
+                    </div>
                     <div className="space-y-2">
                         <Label htmlFor="decimal-precision">Sensor Decimal Precision ({decimalPrecision})</Label>
                         <Slider 
@@ -73,10 +90,6 @@ export function SettingsPanel() {
                     <div className="space-y-2">
                         <Label htmlFor="alert-volume">Alert Volume</Label>
                         <Slider id="alert-volume" defaultValue={[75]} max={100} step={1} />
-                    </div>
-                    <div className="flex items-center justify-between">
-                        <Label htmlFor="dark-mode">Force Dark Mode</Label>
-                        <Switch id="dark-mode" defaultChecked disabled />
                     </div>
                 </div>
                 <Separator />
