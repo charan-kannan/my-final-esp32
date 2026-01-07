@@ -4,10 +4,13 @@ import { useSensorData } from '@/hooks/use-sensor-data';
 import { SensorCard, SensorCardSkeleton } from '@/components/sensor-card';
 import { RealTimeMonitoring } from '@/components/real-time-monitoring';
 import { useSettings } from './settings-provider';
+import { useUser } from '@/firebase';
 
 export function Dashboard() {
-  const { sensors, isLoading } = useSensorData();
-  const { decimalPrecision } = useSettings();
+  const { user } = useUser();
+  const settings = useSettings();
+  const { sensors, isLoading } = useSensorData(user, settings);
+  const { decimalPrecision } = settings;
 
   const displayedSensors = ['Temperature', 'Humidity', 'Air Quality', 'Gas', 'Noise', 'Light', 'EM Radiation'];
 

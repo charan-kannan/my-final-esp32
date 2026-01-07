@@ -1,8 +1,12 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import type { SensorData, RiskLevel } from '@/lib/types';
 import { SENSOR_TYPES, SENSOR_THRESHOLDS } from '@/lib/constants';
+import type { User } from 'firebase/auth';
+import type { SettingsContextType } from '@/components/settings-provider';
+import { useToast } from './use-toast';
+import { sendAlertNotification } from '@/ai/flows/send-alert-notification';
 
 const HISTORY_LENGTH = 20;
 
@@ -32,17 +36,49 @@ const generateInitialSensors = (): SensorData[] => {
   });
 };
 
-export function useSensorData() {
+export function useSensorData(user: User | null, settings: SettingsContextType) {
   const [sensors, setSensors] = useState<SensorData[]>([]);
   const [isInitialized, setIsInitialized] = useState(false);
+  const { toast } = useToast();
+  const previousSensorsRef = useRef<SensorData[]>([]);
+
+  useEffect(() => {
+    previousSensorsRef.current = sensors;
+  }, [sensors]);
+
+  const triggerNotifications = useCallback((newSensorState: SensorData, oldSensorState: SensorData | undefined) => {
+    if (!user || !oldSensorState) return;
+
+    const becameDanger = newSensorState.riskLevel === 'DANGER' && oldSensorState.riskLevel !== 'DANGER';
+
+    if (becameDanger) {
+      if (settings.pushAlerts) {
+        toast({
+          variant: "destructive",
+          title: `🚨 DANGER: ${newSensorState.type} Alert`,
+          description: `The ${newSensorState.type} level has reached a dangerous value of ${newSensorState.value.toFixed(1)} ${newSensorState.unit}. Please take immediate action.`,
+        });
+      }
+      if (settings.emailAlerts && user.email) {
+        console.log(`Sending email for ${newSensorState.type}...`);
+        sendAlertNotification({
+            userEmail: user.email,
+            sensorType: newSensorState.type,
+            sensorValue: newSensorState.value,
+            unit: newSensorState.unit
+        }).then(response => {
+            console.log(response.message);
+        }).catch(error => {
+            console.error("Failed to send alert notification:", error);
+        });
+      }
+    }
+  }, [user, settings.pushAlerts, settings.emailAlerts, toast]);
+
 
   const updateSensorData = useCallback(() => {
-    setSensors(prevSensors => {
-      // If it's the first run, generate initial data.
-      if (prevSensors.length === 0) {
-        return generateInitialSensors();
-      }
-      return prevSensors.map(sensor => {
+    setSensors(currentSensors => {
+      const newSensors = currentSensors.map(sensor => {
         const { min, max } = SENSOR_THRESHOLDS[sensor.type];
         const change = (Math.random() - 0.5) * (max - min) * 0.1;
         let newValue = sensor.value + change;
@@ -62,17 +98,25 @@ export function useSensorData() {
           history: newHistory,
         };
       });
+
+      // Check for state changes and trigger notifications
+      newSensors.forEach(newSensor => {
+        const oldSensor = previousSensorsRef.current.find(s => s.id === newSensor.id);
+        triggerNotifications(newSensor, oldSensor);
+      });
+
+      return newSensors;
     });
-  }, []);
+  }, [triggerNotifications]);
 
   useEffect(() => {
-    // Initialize data once.
     if (!isInitialized) {
-        setSensors(generateInitialSensors());
-        setIsInitialized(true);
+      const initialSensors = generateInitialSensors();
+      setSensors(initialSensors);
+      previousSensorsRef.current = initialSensors;
+      setIsInitialized(true);
     }
     
-    // Set up the interval to update sensor data.
     const interval = setInterval(updateSensorData, 2000);
     return () => clearInterval(interval);
   }, [isInitialized, updateSensorData]);
